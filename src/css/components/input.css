@@ -1,0 +1,129 @@
+input:focus {
+  border-color: var(--primary-color);
+}
+
+.m-input {
+  height: var(--input-height);
+  padding: 0 12px;
+  border-radius: var(--border-radius);
+  border: 1px solid #babec5;
+}
+
+.m-input::placeholder {
+  color: #999999;
+}
+
+.m-input:hover {
+  background-color: #f6f6f6;
+}
+
+.m-input-error {
+  border-color: var(--error-color) !important;
+}
+
+.m-input-action {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translate(0, -50%);
+}
+
+.m-input-require {
+  color: #ff0000;
+}
+
+.m-error-message {
+  color: #ff0000;
+  position: absolute;
+  top: 108%;
+  left: 2px;
+}
+
+.m-label {
+  display: flex;
+  align-items: center;
+}
+
+.m-label-text {
+  font-family: Misa Medium;
+}
+
+/* Checkbox */
+.m-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0 8px;
+}
+
+.m-checkbox-input {
+  display: inline-grid;
+  place-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 2px;
+  border: 1px solid var(--border-color-default);
+  cursor: pointer;
+}
+
+.m-checkbox-input::before {
+  content: "";
+  width: 8px;
+  height: 4px;
+  border-width: 0 0 2px 2px;
+  border-style: solid;
+  border-color: var(--primary-color);
+  transform: rotate(-45deg);
+  transform: 0;
+  cursor: pointer;
+  z-index: 1000;
+  opacity: 0;
+}
+
+.m-checkbox-input:checked {
+  border: 1px solid var(--primary-color);
+}
+
+.m-checkbox-input:checked:before {
+  opacity: 1;
+}
+
+.m-radio {
+  display: flex;
+  align-items: center;
+  gap: 0 8px;
+  height: var(--default-height);
+}
+
+.m-radio:focus {
+  outline-width: 1px;
+  outline-color: var(--primary-color);
+}
+.m-radio-input {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 1px solid var(--border-color-default);
+  display: grid;
+  place-content: center;
+}
+
+.m-radio-input:checked {
+  border: 1px solid var(--primary-color);
+}
+
+.m-radio-input:focus {
+  box-shadow: 0 0 8px var(--primary-color);
+}
+
+.m-radio-input::before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: var(--primary-color);
+  opacity: 0;
+}
+
+.m-radio-input:checked:before {
+  opacity: 1;
+}

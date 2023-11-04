@@ -1,0 +1,165 @@
+.m-icon {
+  background-size: contain;
+  background-position: center;
+  background: url(@/assets/img/Sprites.64af8f61.svg);
+  background-repeat: no-repeat;
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+}
+
+.m-icon-toggle {
+  background-position: -424px -86px;
+}
+
+.m-icon-bell {
+  background-position: -788px -30px;
+}
+
+.m-icon-search {
+  background-position: -992px -360px;
+}
+
+.m-icon-dashboard {
+  background-position: -33px -1630px;
+}
+
+.m-icon-sidebar-cash {
+  background-position: -78px -1631px;
+}
+
+.m-icon-sider-bank {
+  background-position: -121px -1633px;
+}
+
+.m-icon-sider-pu {
+  background-position: -165px -1632px;
+}
+
+.m-icon-refresh {
+  background-position: -423px -201px;
+}
+
+.m-icon-refresh:hover {
+  background-position: -1097px -88px;
+}
+
+.m-icon-arrow-down {
+  background-position: -946px -360px;
+  width: 14px !important;
+  height: 14px !important;
+}
+
+.m-icon-arrow-up {
+  background-position: -946px -360px;
+  width: 14px !important;
+  height: 14px !important;
+  transform: rotate(180deg);
+}
+
+.m-icon-arrow-down-blue {
+  background-position: -896px -359px;
+}
+
+.m-icon-arrow-left {
+  background-position: -35px -360px;
+  width: 12px !important;
+  height: 16px !important;
+}
+
+.m-icon-arrow-right {
+  background-position: -35px -360px;
+  width: 12px !important;
+  height: 16px !important;
+  transform: rotate(180deg);
+}
+
+.m-icon-close {
+  background-position: -144px -144px;
+}
+
+.m-icon-close--small {
+  background-position: -1178px -362px;
+  width: 12px !important;
+  height: 12px !important;
+}
+
+.m-icon-help {
+  background-position: -89px -144px;
+}
+
+.m-icon-warning {
+  background-position: -598px -463px;
+  width: 36px !important;
+  height: 36px !important;
+}
+
+.m-icon-warning--smail {
+  background-position: -817px -145px;
+}
+
+.m-icon-success--smail {
+  background-position: -1602px -258px;
+}
+
+.m-icon-info {
+  background-position: -826px -456px;
+  width: 48px;
+  height: 48px;
+}
+
+.m-icon-info--smail {
+  background-position: -672px -462px;
+}
+
+.m-three-stripes {
+  background-position: -843px -30px;
+}
+
+.m-icon-sidebar-sale {
+  background-position: -208px -1628px;
+}
+
+.m-icon-sidebar-invoice {
+  background-position: -249px -1628px;
+}
+
+.m-icon-sidebar-stock {
+  background-position: -291px -1628px;
+}
+
+.m-icon-sidebar-tools {
+  background-position: -336px -1628px;
+}
+.m-icon-calculator {
+  background-position: -1376px -256px;
+}
+
+.m-icon-excel {
+  background-position: -704px -200px;
+}
+
+.m-icon-expand {
+  background-position: -607px -311px;
+  width: 16px !important;
+  height: 16px !important;
+}
+
+.m-icon-collapse {
+  background-position: -559px -312px;
+  width: 16px !important;
+  height: 16px !important;
+}
+
+.m-icon-recent-log {
+  background-position: -648px -144px;
+}
+
+.m-icon-arrow-check-all {
+  background-position: -256px -143px;
+}
+
+.m-16 {
+  width: 16px;
+  height: 16px;
+}

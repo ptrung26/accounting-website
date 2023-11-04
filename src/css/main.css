@@ -1,0 +1,38 @@
+/* Base CSS */
+@import url(./base/reset.css);
+
+/* Resuable CSS */
+@import url(./utils/variables.css);
+@import url(./utils/fonts.css);
+@import url(./utils/grid.css);
+@import url(./utils/icon.css);
+@import url(./utils/reusable.css);
+
+@import url(./components/table.css);
+@import url(./components/context-menu.css);
+@import url(./components/popup.css);
+@import url(./components/pagination.css);
+@import url(./components/spinner.css);
+@import url(./components/combobox.css);
+
+.main {
+  display: flex;
+  height: calc(100vh - var(--header-height));
+  background-color: #e4e9e7;
+}
+
+/* Custome date pikcer lib */
+.mx-datepicker {
+  width: 100% !important;
+}
+
+.mx-calendar {
+  font-family: Misa Font !important;
+  color: #000 !important;
+}
+.mx-calendar-content .cell {
+  border-radius: 50%;
+}
+.mx-calendar-content .cell.active {
+  background-color: var(--primary-color) !important;
+}

@@ -1,0 +1,90 @@
+.header {
+  width: 100%;
+  height: var(--header-height);
+  background-color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+.header-left .logo-container {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  width: var(--sidebar-width);
+  background-color: #020a01;
+}
+
+.header-left .m-icon-toggle {
+  display: inline-block;
+  margin: 0 16px;
+  width: 24px;
+  height: 24px;
+  position: relative;
+  top: -2px;
+}
+
+.header-left .m-three-stripes {
+  width: 24px;
+  height: 24px;
+  margin: 0 10px;
+}
+
+.header-left .logo {
+  flex: 1;
+  display: inline-block;
+  background-image: url(@/assets/img/Logo_Module_TiengViet_White.66947422.svg);
+  background-size: contain;
+  background-repeat: no-repeat;
+  height: 36px;
+  width: 212px;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0 32px;
+}
+
+.header-actions .m-icon-bell {
+  width: 24px;
+  height: 24px;
+}
+
+.user-feature {
+  display: flex;
+  align-items: center;
+  margin: 0 20px;
+}
+
+.user-image {
+  display: inline-block;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid #bdbbbb;
+  margin-right: 6px;
+}
+
+.user-btn {
+  display: flex;
+  align-items: center;
+  gap: 0 6px;
+  font-size: 13px;
+  font-family: Misa Medium;
+}
+.user-btn .m-icon-arrow-down {
+  width: 14px;
+  height: 14px;
+}

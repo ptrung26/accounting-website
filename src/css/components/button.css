@@ -1,0 +1,84 @@
+/* Button */
+.m-btn {
+  min-width: 80px;
+  height: 26px;
+  background-color: var(--primary-color);
+  border-radius: var(--border-radius);
+  padding: 0 16px;
+  color: #fff;
+  font-family: Misa Medium;
+}
+
+.m-btn:hover {
+  background-color: var(--hover-color);
+}
+
+.m-btn:focus,
+.m-btn:active {
+  background-color: var(--focus-color);
+  outline-width: 1px;
+  outline: 1px solid var(--focus-color);
+}
+
+/* Button-icon */
+.m-btn-icon {
+  background-repeat: no-repeat;
+  background-size: 20px 20px;
+  background-position: 12px center;
+  padding-left: 36px;
+  padding-right: 16px;
+}
+
+/* .m-btn-icon--add {
+} */
+
+.m-btn-seconary {
+  background-color: #ffffff;
+  border: 1px solid #e6e6e6;
+  color: #1f1f1f;
+}
+
+.m-btn-seconary:hover {
+  background-color: #d2d5d6;
+}
+
+.m-btn-seconary:focus,
+.m-btn-seconary:active {
+  background-color: #d2d5d6;
+  outline-width: 1px;
+  outline: 1px solid #d2d5d6;
+}
+
+.m-combo-btn {
+  height: 26px;
+  display: flex;
+  align-items: center;
+  gap: 0 4px;
+  font-size: 13px;
+  font-family: Misa Medium;
+  border: 1px solid #3b3c3f;
+  border-radius: 3px;
+}
+.m-combo-btn {
+  padding: 0 16px;
+}
+
+.m-combo-btn.disable {
+  color: #afafaf;
+  cursor: default;
+  pointer-events: none;
+}
+
+.m-combo-btn:hover {
+  background: #d2d3d6;
+}
+
+.m-combo-btn .m-icon {
+  position: relative;
+  top: -1px;
+  pointer-events: none;
+}
+
+.m-combo-btn span {
+  pointer-events: none;
+}

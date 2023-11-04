@@ -1,0 +1,39 @@
+:root {
+  /* Color */
+  --primary-color: #089740;
+  --hover-color: #39ac66;
+  --focus-color: #055b27;
+  --ouline-color: #e6e6e6;
+  --error-color: #e61d1d;
+  --border-color-default: #e0e0e0;
+
+  /* Base */
+  --default-height: 36px;
+  --header-height: 56px;
+  --toast-height: 56px;
+  --sidebar-width: 200px;
+  --border-radius: 4px;
+  --row-height: 46px;
+
+  /* Z-index */
+  --zindex-dropdown: 1000;
+  --zindex-sticky: 1020;
+  --zindex-fixed: 1030;
+  --zindex-modal-backdrop: 1040;
+  --zindex-modal: 1080;
+  --zindex-popover: 1060;
+  --zindex-tooltip: 1070;
+  --zindex-toast: 1100;
+
+  --toast-speed: 250ms;
+
+  /* Input */
+  --input-height: 26px;
+
+  /* Combobox */
+  --combobox-selection-height: 26px;
+
+  /* Table */
+  --grid-header-height: 32px;
+  --grid-row-height: 32px;
+}

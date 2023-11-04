@@ -1,0 +1,11 @@
+.m-tooltip {
+  background-color: #505050;
+  color: #fff;
+  font-size: 12px;
+  white-space: nowrap;
+  padding: 3px 10px;
+  border-radius: 2px;
+  position: fixed;
+  text-transform: initial;
+  z-index: var(--zindex-popover);
+}

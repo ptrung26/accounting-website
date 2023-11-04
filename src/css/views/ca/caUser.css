@@ -1,0 +1,14 @@
+.content-toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 0 12px;
+  width: 100%;
+}
+.content-toolbar-right .content-search-box {
+  display: block;
+  margin-right: auto;
+}
+
+.expand-all {
+  color: #0075c0;
+}

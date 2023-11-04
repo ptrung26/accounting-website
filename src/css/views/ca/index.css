@@ -1,0 +1,31 @@
+.ca {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 80px);
+}
+
+.ca-nav {
+  display: flex;
+  border-bottom: 1px solid #d4d7dc;
+}
+
+.ca-nav-item {
+  padding: 4px 20px;
+  cursor: pointer;
+}
+
+.ca-nav-item a {
+  color: #000;
+}
+
+.ca-nav-item:hover {
+  color: var(--primary-color);
+}
+
+.ca-nav-item.active {
+  background-color: #f2ebbf;
+  border-radius: 2px;
+  border-bottom: 3px solid var(--primary-color);
+  font-family: Misa Bold;
+}

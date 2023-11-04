@@ -1,0 +1,47 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Misa Font;
+  font-size: 13px;
+}
+
+a {
+  text-decoration: none;
+}
+
+button,
+input {
+  outline: none;
+  border: none;
+  font-family: inherit;
+  background-color: transparent;
+}
+
+button {
+  cursor: pointer;
+}
+
+input {
+  outline: none;
+  border: none;
+}
+
+ul,
+li {
+  list-style: none;
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+  /* Add if not using autoprefixer */
+  -webkit-appearance: none;
+  appearance: none;
+  /* For iOS < 15 to remove gradient background */
+  background-color: #fff;
+  /* Not removed via appearance */
+  margin: 0;
+}

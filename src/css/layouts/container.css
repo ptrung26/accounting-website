@@ -1,0 +1,140 @@
+.container {
+  width: calc(100% - var(--sidebar-width));
+  padding: 24px;
+}
+
+.content {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.content-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 0 16px;
+}
+
+.content-header .content-title {
+  font-size: 22px;
+  color: #111111;
+}
+
+.content-body {
+  background-color: #fff;
+  padding: 12px 16px 12px 12px;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  flex: 1;
+}
+
+.content-toolbar {
+  display: flex;
+  background-color: #fff;
+}
+
+.content-toolbar .btn-add {
+  border-radius: 30px;
+  height: 28px;
+}
+
+.content-toolbar-left {
+  display: flex;
+  align-items: center;
+  gap: 0 12px;
+}
+
+.content-toolbar-left .unselect-all {
+  color: #ff3939;
+}
+
+.content-toolbar-right {
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+  gap: 0 12px;
+}
+
+.content-toolbar-right .content-search-box {
+  position: relative;
+}
+
+.content-toolbar-right .content-search-box .m-input {
+  min-width: 260px;
+}
+
+.content-toolbar-right .content-search-box .m-input::placeholder {
+  font-family: Misa Italic;
+}
+.content-toolbar-right .content-search-box .m-icon-search {
+  width: 16px;
+  height: 16px;
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translate(0, -50%);
+}
+
+.content-grid {
+  margin-top: 12px;
+  overflow: auto;
+  min-height: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.content-grid::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+/* Track */
+.content-grid::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+/* Handle */
+.content-grid::-webkit-scrollbar-thumb {
+  background: #b8bcc3;
+}
+
+/* Handle on hover */
+.content-grid::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+.content-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #fff;
+  padding: 12px 0 12px 10px;
+  position: sticky;
+  left: 0;
+  bottom: 0;
+  z-index: var(--zindex-popover);
+  margin-top: auto;
+}
+
+.content-pagination .total-record {
+  font-family: Misa Medium;
+}
+
+.content-pagination-right {
+  display: flex;
+  align-items: center;
+  gap: 0 6px;
+}
+
+.not-found-data {
+  text-align: center;
+  margin: 50px 0 12px;
+  width: 100%;
+  position: sticky;
+  left: 0;
+  right: 0;
+}

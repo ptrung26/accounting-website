@@ -1,0 +1,38 @@
+.m-spinner {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: var(--zindex-modal);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-left: var(--sidebar-width);
+}
+
+.m-spinner::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+.m-spinner-circle {
+  z-index: var(--zindex-popover);
+}
+
+@keyframes loading-bar-spinner {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.m-spinner-big {
+  border-width: 3px;
+}
+
+.m-spinner-smail {
+  border-width: 2px;
+}

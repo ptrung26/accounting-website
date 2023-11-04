@@ -1,0 +1,128 @@
+.m-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #fff;
+}
+
+.m-table .m-th,
+.m-table .m-td {
+  padding: 0 16px;
+  white-space: nowrap;
+  border-bottom: 1px solid var(--border-color-default);
+  border-left: 1px solid var(--border-color-default);
+  font-size: 12px;
+  min-height: var(--grid-header-height);
+}
+
+.m-table .m-th.select-box,
+.m-table .m-td.select-box {
+  min-width: 40px;
+  max-width: 40px;
+  position: sticky;
+  left: 0;
+  padding: 0 10px;
+}
+
+.m-table .m-th:nth-child(2),
+.m-table .m-td:nth-child(2) {
+  min-width: 150px;
+  position: sticky;
+  /* left: 40px; */
+}
+
+.m-table .m-th:nth-child(3),
+.m-table .m-td:nth-child(3) {
+  min-width: 150px;
+  position: sticky;
+  /* left: 190px; */
+  border-right: 1px dotted var(--border-color-default);
+}
+
+.m-table .m-th:last-child,
+.m-table .m-td:last-child {
+  min-width: 150px;
+  position: sticky;
+  right: 0;
+  border-left: 1px solid var(--border-color-default);
+}
+
+.m-table .m-th:nth-child(1),
+.m-table .m-th:nth-child(2),
+.m-table .m-th:nth-child(3),
+.m-table .m-th:last-child {
+  z-index: calc(var(--zindex-sticky) + 5);
+}
+
+.m-table .m-th {
+  background-color: #eeeeee;
+  color: #000;
+  font-family: Misa Medium;
+  text-align: left;
+  border-left: 1px solid var(--border-color-default);
+  position: sticky;
+  z-index: var(--zindex-sticky);
+  top: 0;
+  height: var(--grid-header-height);
+  white-space: nowrap;
+}
+
+.m-table .m-tr-focus .m-td {
+  background-color: #e5f3ff;
+}
+
+.m-table .m-tbody .m-tr:hover .m-td {
+  background-color: #f2f9ff;
+}
+
+.m-table .m-td {
+  background-color: #fff;
+  height: var(--grid-row-height);
+}
+
+.m-table .m-td-edit {
+  color: #0075c0;
+  position: relative;
+}
+
+.m-table .m-td-menu {
+  color: #0075c0;
+  position: relative;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.m-table .m-td-menu:hover {
+  border: 1px solid #0075c0;
+}
+
+.m-table .m-td-menu .m-icon-arrow-down-blue {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+}
+
+.m-table .m-td-edit {
+  color: #0075c0;
+  position: relative;
+}
+
+.m-table .m-td-edit:hover {
+  font-family: Misa Medium;
+}
+
+.parent-cell {
+  display: flex;
+  align-items: center;
+  gap: 0 8px;
+  width: 100%;
+  height: 100%;
+}
+
+.m-footer .m-td {
+  background: #e8eaef;
+  border: none;
+  font-family: Misa Medium;
+}
