@@ -101,6 +101,10 @@
   align-items: center;
 }
 
+.flex-shrink {
+  flex-shrink: 0;
+}
+
 .justify-center {
   justify-content: center;
 }

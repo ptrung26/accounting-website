@@ -14,6 +14,7 @@
 @import url(./components/pagination.css);
 @import url(./components/spinner.css);
 @import url(./components/combobox.css);
+@import url(./components/input.css);
 
 .main {
   display: flex;

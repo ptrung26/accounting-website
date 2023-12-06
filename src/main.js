@@ -70,3 +70,5 @@ app.config.globalProperties.$errorHandling = errorHandling;
 
 app.use(router);
 app.mount("#app");
+
+export { app };

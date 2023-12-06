@@ -9,3 +9,9 @@
   text-transform: initial;
   z-index: var(--zindex-popover);
 }
+
+.m-tooltip--error {
+  background-color: #f77;
+  color: #fff;
+  box-shadow: 2px 2px 2px 0 #d4d7dc;
+}

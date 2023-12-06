@@ -32,6 +32,8 @@
   flex: 1;
   overflow: auto;
   position: relative;
+  display: flex;
+  flex-direction: column;
 }
 
 .detail-section .collapse-btn {
@@ -74,4 +76,10 @@
   background-color: #f2ebbf;
   position: relative;
   z-index: 10;
+}
+
+.content-pagination {
+  display: flex;
+  align-items: flex-start;
+  flex: 1;
 }

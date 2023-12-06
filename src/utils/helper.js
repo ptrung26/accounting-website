@@ -6,7 +6,7 @@ import MISAEnum from "./MISAEnum";
  * @param {*} dateString
  * @returns date
  */
-const convertDate = (val, format) => {
+const convertDate = (val, format, split = "/") => {
   if (!val) {
     return "";
   }
@@ -23,8 +23,7 @@ const convertDate = (val, format) => {
       format ||
       localStorage.getItem("dateType") ||
       MISAEnum.DateType.dd__mm__yyyy;
-
-    let result = formatDateType(day, month, year, format);
+    let result = formatDateType(day, month, year, format, split);
     return result;
   } catch {
     return "";
@@ -59,20 +58,20 @@ const camelSentence = (str) => {
  * @param {string} str định dạng date muốn chuyển đổi
  * @returns định dạng date sau khi chuyển đổi
  */
-const formatDateType = (day, month, year, format) => {
+const formatDateType = (day, month, year, format, split = "/") => {
   let dateType = 0;
   if (format) {
     dateType = parseInt(format);
   }
   switch (dateType) {
     case MISAEnum.DateType.dd__mm__yyyy:
-      return `${day}/${month}/${year}`;
+      return `${day}${split}${month}${split}${year}`;
     case MISAEnum.DateType.mm__dd__yyyy:
-      return `${month}/${day}/${year}`;
+      return `${month}${split}${day}${split}${year}`;
     case MISAEnum.DateType.yyyy__mm__dd:
-      return `${year}/${month}/${day}`;
+      return `${year}${split}${month}${split}${day}`;
     default:
-      return `${day}/${month}/${year}`;
+      return `${day}${split}${month}${split}${year}`;
   }
 };
 
@@ -82,10 +81,10 @@ const formatDateType = (day, month, year, format) => {
  * @param {int} number Số tiền
  */
 const formatMoney = (number) => {
-  if (!number) {
+  if (!number && number !== 0) {
     return "";
   }
-  return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  return new Intl.NumberFormat().format(number);
 };
 
 export default {

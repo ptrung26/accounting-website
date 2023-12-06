@@ -33,11 +33,18 @@ export default {
         },
         {
           label: this.$MISAResource.VI.CaNav.CollectAndSpendMoney,
-          to: "CAReceive",
+          to: "CaPayment",
         },
       ],
       selectedIdx: 0,
     };
+  },
+  created() {
+    if (this.$route.path.includes("CAProcess")) {
+      this.selectedIdx = 0;
+    } else {
+      this.selectedIdx = 1;
+    }
   },
 };
 </script>

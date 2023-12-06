@@ -1,5 +1,5 @@
 <script>
-import caUserService from "@/services/caUserService";
+import caAccountService from "@/services/caAccountService";
 export default {
   props: {
     type: Number,
@@ -12,6 +12,14 @@ export default {
     },
   },
   methods: {
+    handleShowDetailGrid() {
+      this.isShowDetail = !this.isShowDetail;
+      if (this.isShowDetail) {
+        this.$refs.detailGrid.display = "flex";
+      } else {
+        this.$refs.detailGrid.display = "none";
+      }
+    },
     /**
      * Xử lý sự kiện đóng form
      * Author: ptrung26 (19/08/2023)
@@ -21,7 +29,7 @@ export default {
       // Kiểm tra các giá trị của input có giống với mặc định không
       if (
         JSON.stringify({ ...this.defaultValue }) !==
-        JSON.stringify({ ...this.formValidator.values })
+        JSON.stringify({ ...this.formValue.values })
       ) {
         // Hiện thị dialog thông báo có lưu trữ lại dữ liệu trước khi đóng không
         const oke = await this.$refs.dialog.show({
@@ -62,8 +70,8 @@ export default {
       let { name, value } = e.target;
 
       // Cập nhật giá trị của form
-      this.formValidator.values[name] = value.trim();
-      this.formValidator.touched[name] = true;
+      this.formValue.values[name] = value.trim();
+      this.formValue.touched[name] = true;
       // Validate các giá trị
       this.validator();
     },
@@ -71,32 +79,50 @@ export default {
     /**
      * Xử lý khi combobox thay đổi
      * Author: ptrung26 (23/10/2023)
-     * @param {String} name Tên của combobox
-     * @param {String} value giá trị thay đổi
      */
-    handleOnChangeValueCombobox(name, value) {
-      this.formValidator.values[name] = value;
-      this.formValidator.touched[name] = true;
-      this.validator();
+    handleOnChangeCombobox(params) {
+      const item = params.value;
+      const propValue = params.propValue;
+      if (params.name === "parentId") {
+        const currentParentAccounts = this.accountFilters.filter(
+          (account) => account.accountId === item[propValue]
+        );
+        if (currentParentAccounts.length > 0) {
+          this.currentParentCode = currentParentAccounts[0].accountNumber;
+        } else {
+          this.currentParentCode = "";
+        }
+      }
+
+      this.formValue.values[params.name] = item[propValue];
+      this.formValue.touched[params.name] = true;
     },
 
     /**
-     * Xử lý khi thay đổi giá trị combobox
+     * Xử lý khi thay đổi giá trị checkbox
      * Author: ptrung26 (24/10/2023)
      * @param {*} e event input
      * @param {*} ref combobox ref nếu có
      */
-    handleOnChangeCheckbox(e, ref) {
+    handleOnChangeCheckbox(e, checkboxRef) {
       const { checked, name } = e.target;
-      this.formValidator.values[name] = checked;
-      this.formValidator.touched[name] = true;
-      // Nếu checkbox là false thì set lại combobox về mặc định của nó nếu có
       if (!checked) {
-        if (ref && this.$refs[ref]) {
-          this.$refs[ref]?.handleReset();
+        let value = null;
+        let label = null;
+        if (name === "followObject") {
+          label = this.$MISAResource.VI.ObjectLabel.Customer;
+          value = this.$MISAEnum.ObjectValue.Customer;
+        } else {
+          label = this.$MISAResource.VI.DetailByAction.OnlyWarning;
+          value = this.$MISAEnum.DetailByAction.OnlyWarning;
+        }
+
+        if ((value || value === 0) && label && this.$refs[checkboxRef]) {
+          this.$refs[checkboxRef].set(label, value);
         }
       }
-      this.validator();
+      this.formValue.values[name] = checked;
+      this.formValue.touched[name] = true;
     },
 
     /**
@@ -104,8 +130,8 @@ export default {
      * Author: ptrung26 (31/08/2023)
      */
     handleResetForm() {
-      for (let key of Object.keys(this.formValidator.values)) {
-        this.formValidator.values[key] = null;
+      for (let key of Object.keys(this.formValue.values)) {
+        this.formValue.values[key] = null;
       }
     },
 
@@ -124,7 +150,8 @@ export default {
      * @param {object} toast thông tin toast muốn hiện lên dialog
      */
     async handleShowDialog(toast) {
-      await this.$refs.dialog.show({
+      await this.$refs.dialog?.show({
+        icon: "m-icon m-icon-error m-48 flex-strink",
         title: toast.title,
         message: toast.message,
       });
@@ -135,33 +162,30 @@ export default {
      * Author: ptrung26 (19/08/2023)
      */
     validator() {
-      this.formValidator.errors = {};
-      // Validate số tài khoản
-      if (!this.formValidator.values.accountNumber) {
-        this.formValidator.errors.accountNumber =
-          this.$MISAResource.VI.ErrorMessage.CaUserDetail.AccountNumberNotFound;
+      // Lọc và cập nhật errors từ validator
+      const errors = Object.entries(this.formValue.validator).reduce(
+        (acc, [key, validator]) => {
+          const value = this.formValue.values[key];
+          const error = validator(value);
+          if (error) acc[key] = error;
+          else delete this.formValue.errors[key];
+          return acc;
+        },
+        {}
+      );
 
-        // Độ dài của số tài khoản
-      } else if (this.formValidator.values.accountNumber?.length < 3) {
-        this.formValidator.errors.accountNumber =
-          this.$MISAResource.VI.ErrorMessage.CaUserDetail.LengthOfAccountNumberIsInvalid;
+      // Xóa các phần tử null hoặc undefined từ mảng errors
+      Object.keys(errors).forEach((key) => {
+        if (!errors[key]) delete errors[key];
+      });
 
-        // Phải bắt đầu là tài khoản tổng hợp
-      } else if (
-        this.$refs.parentId &&
-        this.$refs.parentId.getCbbValue() &&
-        !this.formValidator.values.accountNumber
-          .toString()
-          .startsWith(this.$refs.parentId.getCbbValue())
-      ) {
-        this.formValidator.errors.accountNumber =
-          this.$MISAResource.VI.ErrorMessage.CaUserDetail.AccountNumberIsNotBeginWithGeneralAccount;
-      }
+      // Xóa các phần tử null hoặc undefined từ formValue.errors
+      Object.keys(this.formValue.errors).forEach((key) => {
+        if (!this.formValue.errors[key]) delete this.formValue.errors[key];
+      });
 
-      if (!this.formValidator.values.accountName) {
-        this.formValidator.errors.accountName =
-          this.$MISAResource.VI.ErrorMessage.CaUserDetail.AccountNameNotFound;
-      }
+      // Gán lại giá trị cho formValue.errors sau khi lọc
+      this.formValue.errors = { ...this.formValue.errors, ...errors };
     },
 
     /**
@@ -172,20 +196,23 @@ export default {
     async handleOnSubmit(type) {
       // Validate trước khi submit
       this.validator();
-      const errorKeys = Object.keys(this.formValidator.errors);
+      const errorKeys = Object.keys(this.formValue.errors);
 
       // Nếu có lỗi thì hiện dialog thông tin lỗi
       if (errorKeys.length) {
-        this.alertErrorMessage = this.formValidator.errors[errorKeys[0]];
+        this.alertErrorMessage = this.formValue.errors[errorKeys[0]];
+
         for (let key of errorKeys) {
-          this.formValidator.touched[key] = true;
+          this.formValue.touched[key] = true;
         }
 
-        // hiện thị dialog
-        await this.$refs.dialog.show({
-          title: this.$MISAResource.VI.Title.Error,
-          message: this.alertErrorMessage,
-        });
+        if (this.$refs.dialog) {
+          // hiện thị dialog
+          await this.$refs.dialog?.show({
+            icon: "m-icon-error m-48",
+            message: this.alertErrorMessage,
+          });
+        }
 
         // focus lại input lỗi đầu tiên được tìm thấy
         this.$nextTick(() => {
@@ -193,6 +220,7 @@ export default {
         });
       } else {
         // Xử lý khi thêm nhân viên
+        this.alertErrorMessage = "";
         if (
           this.type === this.$MISAEnum.FormType.Add ||
           this.type === this.$MISAEnum.FormType.Replication
@@ -200,7 +228,7 @@ export default {
           await this.handleAddNewAccount(type);
         }
         if (this.type === this.$MISAEnum.FormType.Edit) {
-          await this.handleEditNewAccount(type);
+          await this.handleEditAccount(type);
         }
       }
     },
@@ -211,10 +239,8 @@ export default {
      * @param name tên của input hoặc combobox muốn focus
      */
     handleFocusInputOrCombobox(name) {
-      if (this.$refs[name]?.$refs?.input) {
-        this.$refs[name]?.$refs?.input.focus();
-      } else if (this.$refs[name]?.$refs?.combobox) {
-        this.$refs[name]?.$refs?.combobox.focus();
+      if (this.$refs[name]) {
+        this.$refs[name].focus();
       }
     },
 
@@ -226,6 +252,68 @@ export default {
       this.isFullScreen = !this.isFullScreen;
     },
 
+    /**
+     * Xử lý thêm họ hàng của item con
+     * Author: ptrung26 (11/11/2023)
+     */
+    findAncestorsAndDescendants(data, nodes, ancestorsAndDescendants = []) {
+      nodes.forEach((node) => {
+        const parentNode = data.find(
+          (item) => item.accountId === node.parentId
+        );
+        const childrenNodes = data.filter(
+          (item) => item.parentId === node.accountId
+        );
+
+        if (
+          parentNode &&
+          !ancestorsAndDescendants.some(
+            (item) => item.accountId === parentNode.accountId
+          )
+        ) {
+          ancestorsAndDescendants.push(parentNode);
+          this.findAncestorsAndDescendants(
+            data,
+            [parentNode],
+            ancestorsAndDescendants
+          );
+        }
+
+        if (childrenNodes.length > 0) {
+          ancestorsAndDescendants.push(...childrenNodes);
+          this.findAncestorsAndDescendants(
+            data,
+            childrenNodes,
+            ancestorsAndDescendants
+          );
+        }
+      });
+
+      return ancestorsAndDescendants;
+    },
+
+    /**
+     * Set focus vào element
+     * Author: ptrung26 (22/11/2023)
+     * @param {String} refElement
+     */
+    handleSetFocus(refElement) {
+      if (refElement && this.$refs[refElement]) {
+        this.$refs[refElement].focus();
+      }
+    },
+
+    handleKeyPress(event) {
+      if (event.ctrlKey && event.key === "s") {
+        event.preventDefault();
+        this.handleOnSubmit(this.$MISAEnum.AddStatus.Add);
+      }
+      if (event.ctrlKey && event.shiftKey && event.key === "S") {
+        event.preventDefault();
+        this.handleOnSubmit(this.$MISAEnum.AddStatus.AddAndSave);
+      }
+    },
+
     /************************************** API **************************************/
     /**
      * Xử lý khi thêm mới tài khoản
@@ -235,7 +323,8 @@ export default {
     async handleAddNewAccount(type) {
       // Xử lý khi thêm tài khoản
       try {
-        const res = await caUserService.post(this.formValidator.values);
+        const res = await caAccountService.post(this.formValue.values);
+
         // Nếu thành công thì hiên thông báo cho người dùng
         if (res.status === this.$MISAEnum.HttpStatus.CREATED) {
           this.handleAddToast({
@@ -247,7 +336,7 @@ export default {
           // Xoá hết dữ liệu trong form
           this.handleResetForm();
           // Cập nhật lại giá trị mặc định
-          this.defaultValue = { ...this.formValidator.values };
+          this.defaultValue = { ...this.formValue.values };
 
           // Cập nhật dữ liệu mới trên UI
           this.$emitter.emit("onDataChange", true);
@@ -263,94 +352,32 @@ export default {
           });
         }
       } catch (err) {
-        // Hiện thị thông báo tương ứng nếu có lỗi
-        let toast = this.$errorHandling.createError(
-          err.response?.status || this.$MISAEnum.HttpStatus.SERVER_ERROR,
-          err.response?.data?.UserMessage ||
-            this.$MISAResource.VI.ErrorMessage.ServerError
-        );
-        if (toast) {
-          // lỗi input phía người dùng
-          if (err.response?.status === 400) {
-            await this.handleShowDialog(toast);
-
-            // focus vào giá trị input lỗi đầu tiên
-            // lỗi validate input
-            if (err.response?.data?.ErrorCode === 400) {
-              if (err.response?.data?.Errors) {
-                const errors = err.response?.data?.Errors;
-                const errorKeys = Object.keys(errors);
-                if (errorKeys.length) {
-                  this.$nextTick(() => {
-                    const errorKeyCamelCase = this.$helper.camelSentence(
-                      errorKeys[0]
-                    );
-                    // Xử lý focus vào input lỗi
-                    this.handleFocusInputOrCombobox(errorKeyCamelCase);
-                    // Hiện thị lỗi
-                    this.formValidator.errors[errorKeyCamelCase] =
-                      errors[errorKeys[0]];
-                    this.formValidator.touched[errorKeyCamelCase] = true;
-                  });
-                }
-              }
-            }
-            // lỗi conflict tài khoản
-            else if (err.response?.data?.ErrorCode === 409) {
+        const { errorKey, errorMessage, status, errorCode, toast } = err;
+        if (status === 400) {
+          if (errorCode === 400) {
+            if (errorKey) {
+              const errorKeyCamelCase =
+                this.$helper.camelSentence(errorKeyCamelCase);
+              await this.handleShowDialog(toast);
               // Xử lý focus vào input lỗi
-              this.handleFocusInputOrCombobox("accountNumber");
+              this.handleSetFocus(errorKeyCamelCase);
               // Hiện thị lỗi
-              this.formValidator.errors["accountNumber"] =
-                this.$MISAResource.VI.ErrorMessage.CaUserDetail.AccountIsExist;
-              this.formValidator.touched["accountNumber"] = true;
+              this.formValue.errors[errorKeyCamelCase] = errorMessage;
+              this.formValue.touched[errorKeyCamelCase] = true;
             }
-          } else {
-            this.handleAddToast(toast);
+          } else if (errorCode == 409) {
+            await this.handleShowDialog(toast);
+            // Xử lý focus vào input lỗi
+            this.handleFocusInputOrCombobox("accountNumber");
+            // Hiện thị lỗi
+            this.formValue.errors["accountNumber"] =
+              this.$MISAResource.VI.ErrorMessage.AccountDetail.AccountIsExist(
+                this.formValue.values.accountNumber
+              );
+            this.formValue.touched["accountNumber"] = true;
           }
-        }
-      }
-    },
-
-    async handleEditNewAccount(type) {
-      // Xử lý khi thêm tài khoản
-      try {
-        const res = await caUserService.put(
-          this.caUser.accountId,
-          this.formValidator.values
-        );
-        // Nếu thành công thì hiên thông báo cho người dùng
-        if (res.status === this.$MISAEnum.HttpStatus.OK) {
-          this.handleAddToast({
-            id: Date.now(),
-            status: this.$MISAEnum.ToastStatus.Success,
-            message: this.$MISAResource.VI.SuccessMessage.CaUser.EditAccount,
-          });
-
-          // Cập nhật lại giá trị mặc định
-          this.defaultValue = { ...this.formValidator.values };
-
-          // Cập nhật dữ liệu mới trên UI
-          this.$emitter.emit("onDataChange", true);
-          if (type === this.$MISAEnum.AddStatus.Add) {
-            this.$emitter.emit("onCloseForm");
-          }
-
-          // Focus lại input
-          this.$nextTick(() => {
-            if (this.$refs?.accountNumber?.$refs?.input) {
-              this.$refs?.accountNumber?.$refs?.input.focus();
-            }
-          });
-        }
-      } catch (err) {
-        // Hiện thị thông báo tương ứng nếu có lỗi
-        let toast = this.$errorHandling.createError(
-          err.response?.status || this.$MISAEnum.HttpStatus.SERVER_ERROR,
-          err.response?.data?.UserMessage ||
-            this.$MISAResource.VI.ErrorMessage.ServerError
-        );
-        if (toast) {
-          this.handleAddToast(toast);
+        } else {
+          this.addToast(toast);
         }
       }
     },
@@ -364,17 +391,20 @@ export default {
       // Lấy ra thông tin tài khoản từ prop
       try {
         // Gọi API để sửa thông tin tài khoản
-        const res = await caUserService.put(this.formValidator.values);
+        const res = await caAccountService.put(
+          this.caUser.accountId,
+          this.formValue.values
+        );
 
         // Nếu sửa thành công hiện thông báo cho người dùng
         if (res.status === this.$MISAEnum.HttpStatus.OK) {
           this.handleAddToast({
             id: Date.now(),
             status: this.$MISAEnum.ToastStatus.Success,
-            message: this.$MISAResource.VI.SuccessMessage.EditAccount,
+            message: this.$MISAResource.VI.SuccessMessage.CaUser.EditAccount,
           });
           // Cập nhật lại giá trị mặc định
-          this.defaultValue = { ...this.formValidator.values };
+          this.defaultValue = { ...this.formValue.values };
           // Cập nhật dữ liệu mới trên UI
           this.$emitter.emit("onDataChange", true);
           if (type === this.$MISAEnum.AddStatus.Add) {
@@ -389,38 +419,60 @@ export default {
           });
         }
       } catch (err) {
-        // Hiện thị thông báo tương ứng nếu có lỗi
-        let toast = this.$errorHandling.createError(
-          err.response.status || this.$MISAEnum.HttpStatus.SERVER_ERROR,
-          err.response?.data?.UserMessage ||
-            this.$MISAResource.VI.ErrorMessage.ServerError
-        );
-        if (toast) {
-          // Badrequest: lỗi input phía người dùng
-          if (err.response?.status === 400) {
-            await this.handleShowDialog(toast);
-            // focus vào giá trị input lỗi đầu tiên
-            if (err.response?.data?.Errors) {
-              const errors = err.response?.data?.Errors;
-              const errorKeys = Object.keys(errors);
-              if (errorKeys.length) {
-                this.$nextTick(() => {
-                  const errorKeyCamelCase = this.$helper.camelSentence(
-                    errorKeys[0]
-                  );
-                  // Xử lý focus vào input lỗi
-                  this.handleFocusInputOrCombobox(errorKeyCamelCase);
-                  // Hiện thị lỗi
-                  this.formValidator.errors[errorKeyCamelCase] =
-                    errors[errorKeys[0]];
-                  this.formValidator.touched[errorKeyCamelCase] = true;
-                });
-              }
+        const { errorKey, errorMessage, status, errorCode, toast } = err;
+        if (status === 400) {
+          if (errorCode === 400) {
+            if (errorKey) {
+              const errorKeyCamelCase =
+                this.$helper.camelSentence(errorKeyCamelCase);
+              await this.handleShowDialog(toast);
+              // Xử lý focus vào input lỗi
+              this.handleSetFocus(errorKeyCamelCase);
+              // Hiện thị lỗi
+              this.formValue.errors[errorKeyCamelCase] = errorMessage;
+              this.formValue.touched[errorKeyCamelCase] = true;
             }
+          } else if (errorCode == 409) {
+            await this.handleShowDialog(toast);
+            // Xử lý focus vào input lỗi
+            this.handleFocusInputOrCombobox("accountNumber");
+            // Hiện thị lỗi
+            this.formValue.errors["accountNumber"] =
+              this.$MISAResource.VI.ErrorMessage.AccountDetail.AccountIsExist;
+            this.formValue.touched["accountNumber"] = true;
+          }
+        } else {
+          this.handleAddToast(toast);
+        }
+      }
+    },
+
+    /**
+     * Lấy toàn bộ tài khoản
+     * Author: ptrung26 (23/10/2023)
+     */
+    async handleGetAllAcounts() {
+      const res = await caAccountService.getAll();
+      const accounts = res.data;
+      if (this.type === this.$MISAEnum.FormType.Edit) {
+        if (this.caUser?.accountNumber) {
+          const parent = accounts.find(
+            (account) => account.accountId === this.caUser.parentId
+          );
+          if (parent) {
+            const filters = accounts.filter((account) => {
+              return (
+                account.accountNumber !== this.caUser.accountNumber ||
+                account.parentId !== parent.accountId
+              );
+            });
+            this.accountFilters = filters;
           } else {
-            this.handleAddToast(toast);
+            this.accountFilters = accounts;
           }
         }
+      } else {
+        this.accountFilters = accounts;
       }
     },
   },
@@ -449,49 +501,107 @@ export default {
         }
       },
     },
+
+    titleMode: {
+      get() {
+        if (this.type === this.$MISAEnum.FormType.Edit) {
+          return this.$MISAResource.VI.FormTitle.Account.Edit;
+        }
+        if (this.type === this.$MISAEnum.FormType.Replication) {
+          return this.$MISAResource.VI.FormTitle.Account.Replication;
+        }
+
+        return this.$MISAResource.VI.FormTitle.Account.Add;
+      },
+    },
   },
 
   data() {
-    // form lưu trữ giá trị input, validate hiện thị lỗi trước khi submit
-    const formValidator = {
-      // Giá trị của input
-      values: {
-        accountNumber: this.caUser?.accountNumber,
-        accountName: this.caUser?.accountName,
-        property: this.caUser?.property,
-        englishName: this.caUser?.englishName,
-        description: this.caUser?.description,
-        followObject: this.caUser?.followObject,
-        followObjectValue: this.caUser?.followObjectValue,
-        followJob: this.caUser?.followJob,
-        followJobValue: this.caUser?.followJobValue,
-        followOrder: this.caUser?.followOrder,
-        followOrderValue: this.caUser?.followOrderValue,
-        followContract: this.caUser?.followContract,
-        followContractValue: this.caUser?.followContractValue,
-        followDepartment: this.caUser?.followDepartment,
-        followDepartmentValue: this.caUser?.followDepartmentValue,
-        followBankAccount: this.caUser?.followBankAccount,
-        followConstruction: this.caUser?.followConstruction,
-        followConstructionValue: this.caUser?.followConstructionValue,
-        followSellContract: this.caUser?.followSellContract,
-        followSellContractValue: this.caUser?.followSellContractValue,
-        followExpenseItem: this.caUser?.followExpenseItem,
-        followExpenseItemValue: this.caUser?.followExpenseItemValue,
-        followStatisticalCode: this.caUser?.followStatisticalCode,
-        followStatisticalCodeValue: this.caUser?.followStatisticalCodeValue,
-        isPostableInForeignCurrency: this.caUser?.isPostableInForeignCurrency,
-      },
-      // Các input đã touch
-      touched: {},
-      // Lỗi của các input sau khi validate
-      errors: {},
-    };
-
+    const context = this;
     return {
-      formValidator,
+      formValue: {
+        // Giá trị của input
+        values: {
+          accountNumber: this.caUser?.accountNumber,
+          accountName: this.caUser?.accountName,
+          property: this.caUser?.property,
+          englishName: this.caUser?.englishName,
+          description: this.caUser?.description,
+          followObject: this.caUser?.followObject,
+          followObjectValue: this.caUser?.followObjectValue,
+          followJob: this.caUser?.followJob,
+          followJobValue: this.caUser?.followJobValue,
+          followOrder: this.caUser?.followOrder,
+          followOrderValue: this.caUser?.followOrderValue,
+          followContract: this.caUser?.followContract,
+          followContractValue: this.caUser?.followContractValue,
+          followDepartment: this.caUser?.followDepartment,
+          followDepartmentValue: this.caUser?.followDepartmentValue,
+          followBankAccount: this.caUser?.followBankAccount,
+          followConstruction: this.caUser?.followConstruction,
+          followConstructionValue: this.caUser?.followConstructionValue,
+          followSellContract: this.caUser?.followSellContract,
+          followSellContractValue: this.caUser?.followSellContractValue,
+          followExpenseItem: this.caUser?.followExpenseItem,
+          followExpenseItemValue: this.caUser?.followExpenseItemValue,
+          followStatisticalCode: this.caUser?.followStatisticalCode,
+          followStatisticalCodeValue: this.caUser?.followStatisticalCodeValue,
+          isPostableInForeignCurrency: this.caUser?.isPostableInForeignCurrency,
+          parentId: this.caUser?.parentId,
+          isParent: this.caUser?.isParent,
+          inActive: this.caUser?.inActive,
+        },
+        // Các input đã touch
+        touched: {},
+        // Lỗi của các input sau khi validate
+        errors: {},
+        validator: {
+          accountNumber(value) {
+            let error = "";
+            if (!value || value.trim() === "") {
+              error =
+                context.$MISAResource.VI.ErrorMessage.AccountDetail
+                  .AccountNumberNotFound;
+
+              // Độ dài của số tài khoản
+            } else if (value.trim().length < 3) {
+              error =
+                context.$MISAResource.VI.ErrorMessage.AccountDetail
+                  .LengthOfAccountNumberIsInvalid;
+              // Phải bắt đầu là tài khoản tổng hợp
+            } else if (
+              context.currentParentCode &&
+              !value.toString().startsWith(context.currentParentCode)
+            ) {
+              error =
+                context.$MISAResource.VI.ErrorMessage.AccountDetail
+                  .AccountNumberIsNotBeginWithGeneralAccount;
+            }
+            return error;
+          },
+          accountName(value) {
+            let error = "";
+            if (!value || value.trim() === "") {
+              error =
+                context.$MISAResource.VI.ErrorMessage.AccountDetail
+                  .AccountNameNotFound;
+            }
+
+            return error;
+          },
+          property(value) {
+            let error = "";
+            if (!value && value !== 0) {
+              error =
+                context.$MISAResource.VI.ErrorMessage.AccountDetail
+                  .PropertyNotFound;
+            }
+            return error;
+          },
+        },
+      },
       alertErrorMessage: "",
-      defaultValue: { ...formValidator.values },
+      defaultValue: null,
       isFullScreen: false,
       PropertyList: [
         {
@@ -511,7 +621,10 @@ export default {
           propertyName: this.$MISAResource.VI.PropertyLabel.Fourth,
         },
       ],
+      accountFilters: [],
       parent: null,
+      currentParentCode: "",
+      isShowDetail: false,
     };
   },
 
@@ -520,27 +633,40 @@ export default {
     this.$emitter.on("onConfirmDialog", this.handleOnCloseDialog);
     this.$emitter.on("onCloseDialog", this.handleOnCloseDialog);
 
-    this.defaultValue = { ...this.formValidator.values };
+    this.defaultValue = { ...this.formValue.values };
 
-    // Lấy thông tin cha nếu có
     this.$emitter.emit("onEnableLoading", true);
+    // Lấy toàn bộ tài khoản tổng hợp
+    await this.handleGetAllAcounts();
+    // Lấy thông tin cha nếu có
     if (this.caUser && this.caUser["parentId"]) {
       try {
-        const res = await caUserService.getById(this.caUser["parentId"]);
-        console.log(res);
+        const res = await caAccountService.getById(this.caUser["parentId"]);
         this.parent = res.data.data;
       } catch (err) {
-        console.log(err);
+        const { toast } = err;
+        if (toast !== undefined) {
+          this.addToast(toast);
+        }
       }
     }
     setTimeout(() => {
       this.$emitter.emit("onEnableLoading", false);
     }, 200);
+
+    if (this.type === this.$MISAEnum.FormType.Replication) {
+      this.formValue.values.inActive = false;
+      this.formValue.values.isParent = false;
+    }
   },
 
+  mounted() {
+    window.addEventListener("keydown", this.handleKeyPress);
+  },
   beforeMount() {
     this.$emitter.off("onConfirmDialog", this.handleOnCloseDialog);
     this.$emitter.off("onCloseDialog", this.handleOnCloseDialog);
+    window.removeEventListener("keydown", this.handleKeyPress);
   },
 };
 </script>
@@ -578,7 +704,7 @@ export default {
         </m-tooltip>
       </div>
       <div class="m-popup-header">
-        <h3 class="m-popup-title">Sửa tài khoản</h3>
+        <h3 class="m-popup-title">{{ titleMode }}</h3>
       </div>
       <div class="m-popup-control">
         <div class="grid">
@@ -590,23 +716,31 @@ export default {
             <m-tooltip
               position="bottom"
               :text="
-                formValidator.touched.accountNumber &&
-                formValidator.errors.accountNumber
+                formValue.touched.accountNumber &&
+                formValue.errors.accountNumber
               "
+              :tooltipType="$MISAEnum.TooltipType.Error"
             >
               <template v-slot:children>
                 <m-input
                   :class="{
                     'm-input-error':
-                      formValidator.touched.accountNumber &&
-                      formValidator.errors.accountNumber,
+                      formValue.touched.accountNumber &&
+                      formValue.errors.accountNumber,
                   }"
-                  tabindex="0"
+                  tabindex="1"
                   name="accountNumber"
-                  @input="handleOnChange"
                   v-focus
-                  :value="formValidator.values.accountNumber"
+                  v-model="formValue.values.accountNumber"
                   ref="accountNumber"
+                  :validator="formValue.validator.accountNumber"
+                  @update:error="
+                    (error) => {
+                      formValue.touched.accountNumber = true;
+                      formValue.errors.accountNumber = error;
+                    }
+                  "
+                  maxlength="20"
                 />
               </template>
             </m-tooltip>
@@ -620,21 +754,29 @@ export default {
             </label>
             <m-tooltip
               :text="
-                formValidator.touched.accountName &&
-                formValidator.errors.accountName
+                formValue.touched.accountName && formValue.errors.accountName
               "
+              :tooltipType="$MISAEnum.TooltipType.Error"
             >
               <template #children>
                 <m-input
                   :class="{
                     'm-input-error':
-                      formValidator.touched.accountName &&
-                      formValidator.errors.accountName,
+                      formValue.touched.accountName &&
+                      formValue.errors.accountName,
                   }"
-                  tabindex="1"
-                  @input="handleOnChange"
-                  :value="formValidator.values.accountName"
+                  tabindex="2"
+                  v-model="formValue.values.accountName"
                   name="accountName"
+                  ref="accountName"
+                  :validator="formValue.validator.accountName"
+                  @update:error="
+                    (error) => {
+                      formValue.touched.accountName = true;
+                      formValue.errors.accountName = error;
+                    }
+                  "
+                  maxlength="128"
                 />
               </template>
             </m-tooltip>
@@ -647,10 +789,10 @@ export default {
               :class="{
                 'm-input-error': false,
               }"
-              tabindex="2"
-              @input="handleOnChange"
+              tabindex="3"
               name="englishName"
-              :value="formValidator.values.englishName"
+              v-model="formValue.values.englishName"
+              maxlength="128"
             />
           </div>
         </div>
@@ -658,9 +800,12 @@ export default {
           <div class="l-4 m-popup-field p-r-12">
             <label class="m-label">
               <span class="m-label-text">Tài khoản tổng hợp</span>
-              <span class="m-input-require">*</span>
             </label>
-            <m-tooltip position="bottom">
+            <m-tooltip
+              position="bottom"
+              :text="formValue.touched.parentId && formValue.errors.parentId"
+              :tooltipType="$MISAEnum.TooltipType.Error"
+            >
               <template v-slot:children>
                 <m-combobox
                   ref="parentId"
@@ -669,8 +814,8 @@ export default {
                   :placeholder="
                     $MISAResource.VI.generalAcoountLabel.placeholder
                   "
-                  :tabindex="3"
-                  urlAPI="Accounts"
+                  :tabindex="4"
+                  :list="accountFilters"
                   :columns="[
                     {
                       label: 'Số tài khoản',
@@ -678,18 +823,31 @@ export default {
                       columnType: this.$MISAEnum.ColumnType.View,
                       expander: true,
                       width: 120,
+                      minWidth: 120,
                     },
                     {
                       label: 'Tên tài khoản',
                       field: 'accountName',
                       columnType: this.$MISAEnum.ColumnType.View,
-                      width: 120,
+                      width: 240,
+                      minWidth: 240,
                     },
                   ]"
-                  :propText="$MISAEnum.GeneralAccount.PropText"
-                  :propValue="$MISAEnum.GeneralAccount.propValue"
+                  propText="accountNumber"
+                  propValue="accountId"
                   :cbbType="1"
-                  :onItemChange="handleOnChangeValueCombobox"
+                  @update-combobox="handleOnChangeCombobox"
+                  :messageNotFound="
+                    this.$MISAResource.VI.ErrorMessage.AccountDetail
+                      .AccountGeneralIsNotFound
+                  "
+                  @show-error="
+                    (message) => {
+                      formValue.errors.parentId = message;
+                      formValue.touched.parentId = true;
+                    }
+                  "
+                  checkedKey="accountNumber"
                 ></m-combobox>
               </template>
             </m-tooltip>
@@ -697,21 +855,40 @@ export default {
           <div class="l-4 m-popup-field p-r-12">
             <label class="m-label">
               <span class="m-label-text">Tính chất</span>
+              <span class="m-input-require">*</span>
             </label>
-            <m-tooltip position="bottom">
+            <m-tooltip
+              position="bottom"
+              :text="formValue.touched.property && formValue.errors.property"
+              :tooltipType="$MISAEnum.TooltipType.Error"
+            >
               <template v-slot:children>
                 <m-combobox
                   name="property"
+                  ref="property"
                   :placeholder="$MISAResource.VI.propertyLabel.placeholder"
                   :defaultValue="{
                     property: caUser?.property,
                     propertyName: $MISAEnum.Property.get(caUser?.property),
                   }"
-                  :tabindex="4"
+                  :tabindex="5"
                   :list="PropertyList"
                   :propText="$MISAEnum.Property.PropText"
                   :propValue="$MISAEnum.Property.PropValue"
-                  :onItemChange="handleOnChangeValueCombobox"
+                  @update-combobox="handleOnChangeCombobox"
+                  checkedKey="property"
+                  :validator="formValue.validator.property"
+                  @show-error="
+                    (message) => {
+                      formValue.touched.property = true;
+                      formValue.errors.property = message;
+                    }
+                  "
+                  :messageNotFound="
+                    this.$MISAResource.VI.ErrorMessage.AccountDetail
+                      .PropertyIsNotExist
+                  "
+                  :comboboxError="formValue.errors.property"
                 ></m-combobox>
               </template>
             </m-tooltip>
@@ -722,13 +899,15 @@ export default {
             <label class="m-label">
               <span class="m-label-text">Diễn giải</span>
             </label>
-            <m-input
+            <textarea
               name="description"
               :class="{
                 'm-input-error': false,
               }"
-              tabindex="5"
-              @input="handleOnChange"
+              class="m-input m-textarea"
+              tabindex="6"
+              maxlength="255"
+              v-model="formValue.values.description"
             />
           </div>
         </div>
@@ -736,10 +915,11 @@ export default {
           <div class="l-12">
             <label class="m-label">
               <m-input-checkbox
-                tabindex="6"
                 name="isPostableInForeignCurrency"
-                :value="!formValidator.values.isPostableInForeignCurrency"
-                @change="handleOnChange"
+                :checked="formValue.values.isPostableInForeignCurrency"
+                @change="handleOnChangeCheckbox"
+                @keyboard-enter="handleOnChangeCheckbox"
+                tabindex="7"
               />
               <span class="m-l-6">Có hạch toán ngoại tệ</span>
             </label>
@@ -747,18 +927,33 @@ export default {
         </div>
       </div>
       <div class="m-popup-control">
-        <p class="fs-16 m-b-12">Theo dõi chi tiết theo</p>
-        <div class="grid">
+        <p class="fs-16 m-b-12">
+          <button
+            class="m-icon"
+            :class="{
+              'm-icon-black': !isShowDetail,
+              'm-icon-black-down': isShowDetail,
+            }"
+            @click="handleShowDetailGrid"
+          ></button
+          >Theo dõi chi tiết theo
+        </p>
+        <div class="grid" v-show="isShowDetail" ref="detailGrid">
           <div class="grid align-center m-b-8 w-full">
             <div class="grid align-center l-6 p-r-20">
               <div class="l-6 p-r-12 grid align-center">
                 <label class="m-label">
                   <m-input-checkbox
                     name="followObject"
-                    :checked="formValidator.values.followObject"
+                    :checked="formValue.values.followObject"
                     @change="
                       handleOnChangeCheckbox($event, 'followObjectValue')
                     "
+                    @keyboard-enter="
+                      (event) =>
+                        handleOnChangeCheckbox(event, 'followObjectValue')
+                    "
+                    tabindex="8"
                   />
                   <span class="m-l-6">Đối tượng</span>
                 </label>
@@ -767,15 +962,16 @@ export default {
                 <m-combobox
                   name="followObjectValue"
                   ref="followObjectValue"
-                  :disable="!formValidator.values.followObject"
+                  :tabindex="9"
+                  :disable="!formValue.values.followObject"
                   :defaultValue="{
-                    followObjectName: formValidator.values.followObjectValue
+                    followObjectName: formValue.values.followObjectValue
                       ? $MISAEnum.ObjectValue.get(
-                          formValidator.values.followObjectValue
+                          formValue.values.followObjectValue
                         )
                       : $MISAResource.VI.ObjectLabel.Customer,
-                    followObjectValue: formValidator.values.followObjectValue
-                      ? formValidator.values.followObjectValue
+                    followObjectValue: formValue.values.followObjectValue
+                      ? formValue.values.followObjectValue
                       : $MISAEnum.ObjectValue.Customer,
                   }"
                   :list="[
@@ -794,7 +990,8 @@ export default {
                   ]"
                   propValue="followObjectValue"
                   propText="followObjectName"
-                  :onItemChange="handleOnChangeValueCombobox"
+                  @update-combobox="handleOnChangeCombobox"
+                  checkedKey="followObjectValue"
                 ></m-combobox>
               </div>
             </div>
@@ -803,8 +1000,10 @@ export default {
                 <label class="m-label">
                   <m-input-checkbox
                     name="followBankAccount"
-                    :checked="formValidator.values.followBankAccount"
+                    :checked="formValue.values.followBankAccount"
                     @change="handleOnChangeCheckbox($event)"
+                    @keyboard-enter="(event) => handleOnChangeCheckbox(event)"
+                    tabindex="10"
                   />
                   <span class="m-l-6">Tài khoản ngân hàng</span>
                 </label>
@@ -817,8 +1016,12 @@ export default {
                 <label class="m-label w-full">
                   <m-input-checkbox
                     @change="handleOnChangeCheckbox($event, 'followJobValue')"
+                    @keyboard-enter="
+                      (event) => handleOnChangeCheckbox(event, 'followJobValue')
+                    "
                     name="followJob"
-                    :checked="formValidator.values.followJob"
+                    :checked="formValue.values.followJob"
+                    tabindex="11"
                   />
                   <span class="m-l-6">Đối tượng THCP</span>
                 </label>
@@ -827,14 +1030,16 @@ export default {
                 <m-combobox
                   name="followJobValue"
                   ref="followJobValue"
-                  :disable="!formValidator.values.followJob"
+                  :disable="!formValue.values.followJob"
                   :defaultValue="{
-                    label: formValidator.values.followJobValue
+                    label: formValue.values.followJobValue
                       ? $MISAEnum.DetailByAction.get(
-                          formValidator.values.followJobValue
+                          formValue.values.followJobValue
                         )
                       : $MISAResource.VI.DetailByAction.OnlyWarning,
-                    followJobValue: $MISAEnum.DetailByAction.OnlyWarning,
+                    followJobValue: formValue.values.followJobValue
+                      ? formValue.values.followJobValue
+                      : $MISAEnum.DetailByAction.OnlyWarning,
                   }"
                   :list="[
                     {
@@ -848,7 +1053,9 @@ export default {
                   ]"
                   propValue="followJobValue"
                   propText="label"
-                  :onItemChange="handleOnChangeValueCombobox"
+                  @update-combobox="handleOnChangeCombobox"
+                  checkedKey="followJobValue"
+                  :tabindex="12"
                 ></m-combobox>
               </div>
             </div>
@@ -859,8 +1066,13 @@ export default {
                     @change="
                       handleOnChangeCheckbox($event, 'followConstructionValue')
                     "
+                    @keyboard-enter="
+                      (event) =>
+                        handleOnChangeCheckbox(event, 'followConstructionValue')
+                    "
                     name="followConstruction"
-                    :checked="formValidator.values.followConstruction"
+                    :checked="formValue.values.followConstruction"
+                    tabindex="13"
                   />
                   <span class="m-l-6">Công trình</span>
                 </label>
@@ -869,15 +1081,17 @@ export default {
                 <m-combobox
                   name="followConstructionValue"
                   ref="followConstructionValue"
-                  :disable="!formValidator.values.followConstruction"
+                  :disable="!formValue.values.followConstruction"
                   :defaultValue="{
-                    label: formValidator.values.followConstructionValue
+                    label: formValue.values.followConstructionValue
                       ? $MISAEnum.DetailByAction.get(
-                          formValidator.values.followConstructionValue
+                          formValue.values.followConstructionValue
                         )
                       : $MISAResource.VI.DetailByAction.OnlyWarning,
-                    followConstructionValue:
-                      $MISAEnum.DetailByAction.OnlyWarning,
+                    followConstructionValue: formValue.values
+                      .followConstructionValue
+                      ? formValue.values.followConstructionValue
+                      : $MISAEnum.DetailByAction.OnlyWarning,
                   }"
                   :list="[
                     {
@@ -893,7 +1107,9 @@ export default {
                   ]"
                   propValue="followConstructionValue"
                   propText="label"
-                  :onItemChange="handleOnChangeValueCombobox"
+                  @update-combobox="handleOnChangeCombobox"
+                  checkedKey="followConstructionValue"
+                  :tabindex="14"
                 ></m-combobox>
               </div>
             </div>
@@ -904,8 +1120,13 @@ export default {
                 <label class="m-label w-full">
                   <m-input-checkbox
                     @change="handleOnChangeCheckbox($event, 'followOrderValue')"
+                    @keyboard-enter="
+                      (event) =>
+                        handleOnChangeCheckbox(event, 'followOrderValue')
+                    "
                     name="followOrder"
-                    :checked="formValidator.values.followOrder"
+                    :checked="formValue.values.followOrder"
+                    tabindex="15"
                   />
                   <span class="m-l-6">Đơn đặt hàng</span>
                 </label>
@@ -914,14 +1135,16 @@ export default {
                 <m-combobox
                   name="followOrderValue"
                   ref="followOrderValue"
-                  :disable="!formValidator.values.followOrder"
+                  :disable="!formValue.values.followOrder"
                   :defaultValue="{
-                    label: formValidator.values.followOrderValue
+                    label: formValue.values.followOrderValue
                       ? $MISAEnum.DetailByAction.get(
-                          formValidator.values.followOrderValue
+                          formValue.values.followOrderValue
                         )
                       : $MISAResource.VI.DetailByAction.OnlyWarning,
-                    followOrderValue: $MISAEnum.DetailByAction.OnlyWarning,
+                    followOrderValue: formValue.values.followOrderValue
+                      ? formValue.values.followOrderValue
+                      : $MISAEnum.DetailByAction.OnlyWarning,
                   }"
                   :list="[
                     {
@@ -935,7 +1158,9 @@ export default {
                   ]"
                   propValue="followOrderValue"
                   propText="label"
-                  :onItemChange="handleOnChangeValueCombobox"
+                  @update-combobox="handleOnChangeCombobox"
+                  checkedKey="followOrderValue"
+                  :tabindex="16"
                 ></m-combobox>
               </div>
             </div>
@@ -946,8 +1171,12 @@ export default {
                     @change="
                       handleOnChangeCheckbox($event, 'followSellContractValue')
                     "
+                    @keyboard-enter="
+                      handleOnChangeCheckbox($event, 'followSellContractValue')
+                    "
                     name="followSellContract"
-                    :checked="formValidator.values.followSellContract"
+                    :checked="formValue.values.followSellContract"
+                    tabindex="17"
                   />
                   <span class="m-l-6">Hợp đồng bán</span>
                 </label>
@@ -956,15 +1185,17 @@ export default {
                 <m-combobox
                   name="followSellContractValue"
                   ref="followSellContractValue"
-                  :disable="!formValidator.values.followSellContract"
+                  :disable="!formValue.values.followSellContract"
                   :defaultValue="{
-                    label: formValidator.values.followSellContractValue
+                    label: formValue.values.followSellContractValue
                       ? $MISAEnum.DetailByAction.get(
-                          formValidator.values.followSellContractValue
+                          formValue.values.followSellContractValue
                         )
                       : $MISAResource.VI.DetailByAction.OnlyWarning,
-                    detailByBuyContractKind:
-                      $MISAEnum.DetailByAction.OnlyWarning,
+                    followSellContractValue: formValue.values
+                      .followSellContractValue
+                      ? formValue.values.followSellContractValue
+                      : $MISAEnum.DetailByAction.OnlyWarning,
                   }"
                   :list="[
                     {
@@ -980,7 +1211,9 @@ export default {
                   ]"
                   propValue="followSellContractValue"
                   propText="label"
-                  :onItemChange="handleOnChangeValueCombobox"
+                  @update-combobox="handleOnChangeCombobox"
+                  checkedKey="followSellContractValue"
+                  :tabindex="18"
                 ></m-combobox>
               </div>
             </div>
@@ -993,8 +1226,13 @@ export default {
                     @change="
                       handleOnChangeCheckbox($event, 'followContractValue')
                     "
+                    @keyboard-enter="
+                      (event) =>
+                        handleOnChangeCheckbox(event, 'followContractValue')
+                    "
                     name="followContract"
-                    :checked="formValidator.values.detailByContract"
+                    :checked="formValue.values.followContract"
+                    tabindex="19"
                   />
                   <span class="m-l-6">Hợp đồng mua</span>
                 </label>
@@ -1003,14 +1241,16 @@ export default {
                 <m-combobox
                   name="followContractValue"
                   ref="followContractValue"
-                  :disable="!formValidator.values.followContract"
+                  :disable="!formValue.values.followContract"
                   :defaultValue="{
-                    label: formValidator.values.followContractValue
+                    label: formValue.values.followContractValue
                       ? $MISAEnum.DetailByAction.get(
-                          formValidator.values.followContractValue
+                          formValue.values.followContractValue
                         )
                       : $MISAResource.VI.DetailByAction.OnlyWarning,
-                    followContractValue: $MISAEnum.DetailByAction.OnlyWarning,
+                    followContractValue: formValue.values.followContractValue
+                      ? formValue.values.followContractValue
+                      : $MISAEnum.DetailByAction.OnlyWarning,
                   }"
                   :list="[
                     {
@@ -1024,7 +1264,9 @@ export default {
                   ]"
                   propValue="followContractValue"
                   propText="label"
-                  :onItemChange="handleOnChangeValueCombobox"
+                  @update-combobox="handleOnChangeCombobox"
+                  checkedKey="followContractValue"
+                  :tabindex="20"
                 ></m-combobox>
               </div>
             </div>
@@ -1035,8 +1277,13 @@ export default {
                     @change="
                       handleOnChangeCheckbox($event, 'followExpenseItemValue')
                     "
+                    @keyboard-enter="
+                      (event) =>
+                        handleOnChangeCheckbox(event, 'followExpenseItemValue')
+                    "
                     name="followExpenseItem"
-                    :checked="formValidator.values.followExpenseItem"
+                    :checked="formValue.values.followExpenseItem"
+                    tabindex="21"
                   />
                   <span class="m-l-6">Khoản mục CP</span>
                 </label>
@@ -1045,15 +1292,17 @@ export default {
                 <m-combobox
                   name="followExpenseItemValue"
                   ref="followExpenseItemValue"
-                  :disable="!formValidator.values.followExpenseItem"
+                  :disable="!formValue.values.followExpenseItem"
                   :defaultValue="{
-                    label: formValidator.values.followExpenseItemValue
+                    label: formValue.values.followExpenseItemValue
                       ? $MISAEnum.DetailByAction.get(
-                          formValidator.values.followExpenseItemValue
+                          formValue.values.followExpenseItemValue
                         )
                       : $MISAResource.VI.DetailByAction.OnlyWarning,
-                    followExpenseItemValue:
-                      $MISAEnum.DetailByAction.OnlyWarning,
+                    followExpenseItemValue: formValue.values
+                      .followExpenseItemValue
+                      ? formValue.values.followExpenseItemValue
+                      : $MISAEnum.DetailByAction.OnlyWarning,
                   }"
                   :list="[
                     {
@@ -1069,7 +1318,9 @@ export default {
                   ]"
                   propValue="followExpenseItemValue"
                   propText="label"
-                  :onItemChange="handleOnChangeValueCombobox"
+                  @update-combobox="handleOnChangeCombobox"
+                  checkedKey="followExpenseItemValue"
+                  :tabindex="22"
                 ></m-combobox>
               </div>
             </div>
@@ -1082,8 +1333,13 @@ export default {
                     @change="
                       handleOnChangeCheckbox($event, 'followDepartmentValue')
                     "
+                    @keyboard-enter="
+                      (event) =>
+                        handleOnChangeCheckbox(event, 'followDepartmentValue')
+                    "
                     name="followDepartment"
-                    :checked="formValidator.values.followDepartment"
+                    :checked="formValue.values.followDepartment"
+                    tabindex="23"
                   />
                   <span class="m-l-6">Đơn vị</span>
                 </label>
@@ -1093,14 +1349,17 @@ export default {
                   name="followDepartmentValue"
                   ref="followDepartmentValue"
                   :defaultValue="{
-                    label: formValidator.values.followDepartmentValue
+                    label: formValue.values.followDepartmentValue
                       ? $MISAEnum.DetailByAction.get(
-                          formValidator.values.followDepartmentValue
+                          formValue.values.followDepartmentValue
                         )
                       : $MISAResource.VI.DetailByAction.OnlyWarning,
-                    followDepartmentValue: $MISAEnum.DetailByAction.OnlyWarning,
+                    followDepartmentValue: formValue.values
+                      .followDepartmentValue
+                      ? formValue.values.followDepartmentValue
+                      : $MISAEnum.DetailByAction.OnlyWarning,
                   }"
-                  :disable="!formValidator.values.followDepartment"
+                  :disable="!formValue.values.followDepartment"
                   :list="[
                     {
                       label: $MISAResource.VI.DetailByAction.OnlyWarning,
@@ -1114,7 +1373,9 @@ export default {
                   ]"
                   propValue="followDepartmentValue"
                   propText="label"
-                  :onItemChange="handleOnChangeValueCombobox"
+                  @update-combobox="handleOnChangeCombobox"
+                  checkedKey="followDepartmentValue"
+                  :tabindex="24"
                 ></m-combobox>
               </div>
             </div>
@@ -1123,43 +1384,58 @@ export default {
                 <label class="m-label w-full">
                   <m-input-checkbox
                     @change="
-                      handleOnChangeCheckbox($event, 'followExpenseItemValue')
+                      handleOnChangeCheckbox(
+                        $event,
+                        'followStatisticalCodeValue'
+                      )
                     "
-                    name="followExpenseItem"
-                    :checked="formValidator.values.followExpenseItem"
+                    @keyboard-enter="
+                      (event) =>
+                        handleOnChangeCheckbox(
+                          event,
+                          'followStatisticalCodeValue'
+                        )
+                    "
+                    name="followStatisticalCode"
+                    :checked="formValue.values.followStatisticalCode"
+                    tabindex="25"
                   />
                   <span class="m-l-6">Mã thống kê</span>
                 </label>
               </div>
               <div class="l-6">
                 <m-combobox
-                  name="followExpenseItemValue"
-                  ref="followExpenseItemValue"
-                  :disable="!formValidator.values.followExpenseItem"
+                  name="followStatisticalCodeValue"
+                  ref="followStatisticalCodeValue"
+                  :disable="!formValue.values.followStatisticalCode"
                   :defaultValue="{
-                    label: formValidator.values.followExpenseItemValue
+                    label: formValue.values.followStatisticalCodeValue
                       ? $MISAEnum.DetailByAction.get(
-                          formValidator.values.followExpenseItemValue
+                          formValue.values.followStatisticalCodeValue
                         )
                       : $MISAResource.VI.DetailByAction.OnlyWarning,
-                    followExpenseItemValue:
-                      $MISAEnum.DetailByAction.OnlyWarning,
+                    followStatisticalCodeValue: formValue.values
+                      .followStatisticalCodeValue
+                      ? formValue.values.followStatisticalCodeValue
+                      : $MISAEnum.DetailByAction.OnlyWarning,
                   }"
                   :list="[
                     {
                       label: $MISAResource.VI.DetailByAction.OnlyWarning,
-                      followExpenseItemValue:
+                      followStatisticalCodeValue:
                         $MISAEnum.DetailByAction.OnlyWarning,
                     },
                     {
                       label: $MISAResource.VI.DetailByAction.MustInput,
-                      followExpenseItemValue:
+                      followStatisticalCodeValue:
                         $MISAEnum.DetailByAction.MustInput,
                     },
                   ]"
-                  propValue="followExpenseItemValue"
+                  propValue="followStatisticalCodeValue"
                   propText="label"
-                  :onItemChange="handleOnChangeValueCombobox"
+                  @update-combobox="handleOnChangeCombobox"
+                  checkedKey="followStatisticalCodeValue"
+                  :tabindex="26"
                 ></m-combobox>
               </div>
             </div>
@@ -1170,20 +1446,21 @@ export default {
         <m-button
           class="m-btn-seconary"
           @click="handleOnCloseForm"
-          tabindex="20"
+          @blur="handleSetFocus('accountNumber')"
+          tabindex="29"
           >Hủy</m-button
         >
         <div>
           <m-button
             class="m-btn-seconary m-r-6"
             @click="handleOnSubmit($MISAEnum.AddStatus.Add)"
-            tabindex="19"
+            tabindex="28"
             >Cất</m-button
           >
           <m-button
-            class="p-l-12"
+            class="p-l-12 m-btn-fff"
             @click="handleOnSubmit($MISAEnum.AddStatus.AddAndSave)"
-            tabindex="18"
+            tabindex="27"
             >Cất và thêm</m-button
           >
         </div>
@@ -1196,4 +1473,4 @@ export default {
   </div>
 </template>
 
-<style scoped></style>
+<style></style>

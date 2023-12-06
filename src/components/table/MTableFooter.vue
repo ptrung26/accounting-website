@@ -3,10 +3,10 @@
     <m-table-node
       :data="data"
       :columns="columns"
-      :depth="0"
       :isToggleAll="isToggleAll"
-      :hasSelectBox="hasSelectBox"
-      :isHasMethod="isHasMethod"
+      :isShowCheckbox="isShowCheckbox"
+      :isFooter="true"
+      :isShowIndex="isShowIndex"
     >
     </m-table-node>
   </tfoot>
@@ -29,27 +29,17 @@ export default {
       type: Boolean,
       default: false,
     },
-    onTableRowDblClick: {
-      type: Function,
-      default: () => {},
-    },
-    hasSelectBox: {
+    isShowCheckbox: {
       type: Boolean,
       default: false,
     },
-    isHasMethod: {
+    isShowMethod: {
       type: Boolean,
-      default: true,
+      default: false,
     },
-  },
-  methods: {
-    /**
-     * Xử lý sự kiện tr click
-     * Author: ptrung26 (20/10/2023)
-     * @param {Object} data
-     */
-    tableRowDblClick(data) {
-      this.onTableRowDblClick(data);
+    isShowIndex: {
+      type: Boolean,
+      default: false,
     },
   },
 };

@@ -7,6 +7,10 @@ export default {
     columns: {
       type: Array,
     },
+    fColumns: {
+      type: Array,
+      default: () => [],
+    },
     data: {
       type: Array,
     },
@@ -14,15 +18,11 @@ export default {
       type: Object,
       default: () => {},
     },
-    fColumns: {
-      type: Array,
-      default: () => [],
-    },
     checkedList: {
       type: Array,
       default: () => [],
     },
-    isParentKey: {
+    parentKey: {
       type: String,
       default: "",
     },
@@ -30,43 +30,97 @@ export default {
       type: Boolean,
       default: false,
     },
-    isHasMethod: {
-      type: Boolean,
-      default: true,
-    },
-    hasSelectBox: {
+    isShowMethod: {
       type: Boolean,
       default: false,
     },
-    onTableRowDblClick: {
+    isShowIndex: {
+      type: Boolean,
+      default: false,
+    },
+    isShowCheckbox: {
+      type: Boolean,
+      default: false,
+    },
+    isCheckAll: {
+      type: Boolean,
+      default: false,
+    },
+    checkedKey: {
+      type: String,
+      default: "",
+    },
+    tableType: {
+      type: Number,
+      default: 0,
+    },
+    selectedId: {
+      type: String,
+      default: "",
+    },
+    options: {
+      type: Array,
+      default: () => [],
+    },
+    tableMode: {
+      type: Number,
+      default: 0,
+    },
+    validator: {
       type: Function,
       default: () => {},
     },
-    onCheckedOne: {
-      type: Function,
+    errors: {
+      type: Object,
       default: () => {},
     },
-    onCheckedAll: {
-      type: Function,
-      default: () => {},
+    tabindex: {
+      type: Number,
+      default: -1,
+    },
+    isTableFocus: {
+      type: Boolean,
+      default: false,
     },
   },
   components: {
     MTableHeader,
     MTableFooter,
   },
-
+  emits: [
+    "update-data",
+    "row-dblclick",
+    "row-click",
+    "check-one",
+    "check-all",
+    "combobox-update",
+    "delete-row",
+    "delete-row-one",
+    "edit-row",
+    "replication-row",
+    "inactive-row",
+    "value-invalid",
+    "blur-table",
+  ],
   methods: {
     /**
-     Xử lý sự kiện dblclick vào item 
+     Xử lý sự kiện dblclick vào item
      Author: ptrung26 (17/8/2023)
      */
     handleOnTableRowDblClick(data) {
-      this.onTableRowDblClick(data);
+      this.$emit("row-dblclick", data);
     },
 
     /**
-     * Xử lý việc  mở context menu
+     Xử lý sự kiện click vào item
+     Author: ptrung26 (17/8/2023)
+     */
+    handleOnTableRowClick(data) {
+      this.$emit("row-click", data);
+    },
+
+    /**
+     * Xử lý việc mở context menu
      * Author: ptrung26 (21/08/2023)
      */
     handleDeleteItem(data) {
@@ -89,17 +143,16 @@ export default {
      * Author: ptrung26 (19/10/2023);
      */
     enrichTableData() {
-      this.data?.forEach((el) => this.addUniqueId(el));
+      this.data.forEach((el) => this.addUniqueId(el));
     },
 
     /**
      * Xử lý khi checked item
      * Author: ptrung26 (29/10/2023)
-     * @param {String} uuid
-     * @param {Boolean} status Trạng thái của checkbox
+     * @param {Object} data
      */
-    handleOnCheckedOne(uuid, status) {
-      this.onCheckedOne(uuid, status);
+    handleOnCheckedOne(data) {
+      this.$emit("check-one", data);
     },
 
     /**
@@ -112,56 +165,128 @@ export default {
       if (status) {
         ids = this.data.map((item) => item.uuid);
       }
-      this.onCheckedAll(ids);
+      this.emit("check-all", ids);
+    },
+
+    /**
+     * Xử lý khi cập nhật giá trị của cell
+     * @param {Object} newData giá trị mới
+     * Author: ptrung26 (08/11/2023)
+     */
+    updateData(newData) {
+      this.$emit("update-data", newData);
+    },
+
+    /**
+     * Xử lý focus vào component
+     * Author: ptrung26 (25/11/2023)
+     */
+    focus() {
+      this.isFocus = true;
+    },
+
+    /**
+     * Xử lý blur ra khỏi table
+     * Author: ptrung26 (25/11/2023)
+     */
+    blur(isFocusNextRow) {
+      this.isFoucs = false;
+      this.$emit("blur-table", isFocusNextRow);
+    },
+
+    /**
+     * Xử lý focus vào cell mong muốn
+     * Author: ptrung26 (20/11/2023)
+     * @param {int} rowIndex
+     * @param {int} cellIndex
+     */
+    handleSetFocusCell(rowIndex, cellIndex) {
+      if (this.$refs.tbody) {
+        this.$refs.tbody.handleSetFocusCell(rowIndex, cellIndex);
+      }
+    },
+  },
+  watch: {
+    data: {
+      async handler(newValue) {
+        this.colData = [...newValue];
+        this.enrichTableData();
+      },
+    },
+    isTableFocus: {
+      handler(newValue) {
+        this.isFocus = newValue;
+      },
     },
   },
   data() {
     return {
       isLoading: false,
       isCollapse: true,
+      colData: this.data,
+      isFocus: this.isTableFocus,
     };
   },
   created() {
-    // Khởi tạo các emitter
-    this.$emitter.on("onTableRowDblClick", this.handleOnTableRowDblClick);
-    this.$emitter.on("onCheckedOne", this.handleOnCheckedOne);
-    this.$emitter.on("onCheckedAll", this.handleOnCheckedAll);
-
     // Xử lý thêm uuid vào từng item
     this.enrichTableData();
-  },
-  beforeUnmount() {
-    this.$emitter.off("onTableRowDblClick", this.handleOnTableRowDblClick);
-    this.$emitter.off("onCheckedOne", this.handleOnCheckedOne);
   },
 };
 </script>
 
 <template>
-  <table class="m-table">
+  <table class="m-table" :tabindex="tabindex">
     <m-table-header
       :columns="columns"
-      :isHasMethod="isHasMethod"
-      :hasSelectBox="hasSelectBox"
+      :isShowMethod="isShowMethod"
+      :isShowCheckbox="isShowCheckbox"
+      :tableType="tableType"
+      :isShowIndex="isShowIndex"
+      :isCheckAll="isCheckAll"
+      @check-all="(state) => this.$emit('check-all', state)"
     ></m-table-header>
     <m-table-body
-      :data="data"
+      :data="colData"
       :columns="columns"
-      yyyy
       :isToggleAll="isToggleAll"
-      :hasSelectBox="hasSelectBox"
-      :isHasMethod="isHasMethod"
-      :isParentKey="isParentKey"
+      :isShowCheckbox="isShowCheckbox"
+      :isShowMethod="isShowMethod"
+      :isCheckAll="isCheckAll"
+      :parentKey="parentKey"
       :checkedList="checkedList"
+      :tableType="tableType"
+      :checkedKey="checkedKey"
+      :selectedId="selectedId"
+      :tableMode="tableMode"
+      @update-data="updateData"
+      @row-dblclick="handleOnTableRowDblClick"
+      @row-click="handleOnTableRowClick"
+      @combobox-update="(params) => this.$emit('combobox-update', params)"
+      @check-one="(data) => this.$emit('check-one', data)"
+      @delete-row="(data) => this.$emit('delete-row', data)"
+      @delete-row-one="(index) => this.$emit('delete-row-one', index)"
+      @edit-row="(data) => this.$emit('edit-row', data)"
+      @replication-row="(data) => this.$emit('replication-row', data)"
+      @inactive-row="(data) => this.$emit('inactive-row', data)"
+      @value-invalid="(params) => this.$emit('value-invalid', params)"
+      @blur-table="blur"
+      :isShowIndex="isShowIndex"
+      :options="options"
+      :validator="validator"
+      :errors="errors"
+      :tabindex="tabindex"
+      :isFocus="isFocus"
+      ref="tbody"
     >
-      <template #body="nodeProps">
-        <slot name="body" v-bind="nodeProps"></slot>
-      </template>
     </m-table-body>
     <m-table-footer
-      v-if="fData && fColumns"
+      v-if="data.length > 0 && fData && fColumns"
       :data="fData"
       :columns="fColumns"
+      :isShowMethod="isShowMethod"
+      :isShowCheckbox="isShowCheckbox"
+      :tableType="tableType"
+      :isShowIndex="isShowIndex"
       class="m-footer"
     ></m-table-footer>
   </table>

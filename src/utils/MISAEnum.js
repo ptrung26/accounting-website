@@ -7,6 +7,22 @@ const MISAEnum = {
     Edit: 1,
     Replication: 2,
     View: 3,
+    AddAndSave: 4,
+  },
+
+  TableMethod: {
+    Add: 1,
+    Edit: 2,
+    Replication: 3,
+    Delete: 4,
+    DeleteOne: 5,
+    InActive: 6,
+  },
+
+  TableMode: {
+    Default: 1,
+    View: 2,
+    ViewAndEdit: 3,
   },
 
   // Http status
@@ -46,6 +62,7 @@ const MISAEnum = {
   AddStatus: {
     AddAndSave: 0,
     Add: 1,
+    AddAndView: 2,
   },
 
   // Date type
@@ -60,6 +77,7 @@ const MISAEnum = {
     Text: 1,
     Number: 0,
     Date: 2,
+    Money: 3,
   },
 
   // ColumnType
@@ -67,6 +85,7 @@ const MISAEnum = {
     View: 0,
     Input: 1,
     Combobox: 2,
+    Button: 3,
   },
 
   // Tính chất
@@ -155,6 +174,17 @@ const MISAEnum = {
     Left: 0,
     Center: 1,
     Right: 2,
+  },
+
+  FilterDataType: {
+    FindDescendants: 2,
+    FindAncestor: 1,
+    FindAncestorsAndDescendants: 3,
+  },
+
+  TooltipType: {
+    View: 0,
+    Error: 1,
   },
 };
 

@@ -6,6 +6,10 @@ export default {
       type: String,
       default: "top",
     },
+    tooltipType: {
+      type: Number,
+      default: 0,
+    },
   },
   methods: {
     /**
@@ -73,14 +77,21 @@ export default {
 
 <template>
   <div
-    @mouseover="handleShowTooltip(position)"
+    @mouseover.stop="handleShowTooltip(position)"
     @mouseleave.stop="handleHiddenTooltip"
     ref="tooltipContainer"
     class="w-full"
   >
     <slot name="children"></slot>
     <Teleport to="body">
-      <div v-show="isShowTooltip" class="m-tooltip" :style="tooltipPosition">
+      <div
+        v-show="isShowTooltip"
+        class="m-tooltip"
+        :class="{
+          'm-tooltip--error': tooltipType === $MISAEnum.TooltipType.Error,
+        }"
+        :style="tooltipPosition"
+      >
         {{ text }}
       </div>
     </Teleport>

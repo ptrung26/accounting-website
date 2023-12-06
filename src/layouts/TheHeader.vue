@@ -75,6 +75,7 @@ export default {
         :style="{ 'margin-right': '12px' }"
         position="bottom"
         :editable="false"
+        checkedKey="value"
       />
       <div class="header-actions">
         <m-button-icon class="m-icon-bell"></m-button-icon>
@@ -82,7 +83,7 @@ export default {
       <div class="user-feature">
         <span class="user-image"></span>
         <m-combo-button
-          class="user-btn"
+          :style="'user-btn'"
           text="Phạm Việt Trung"
           icon="m-icon-arrow-down"
         />

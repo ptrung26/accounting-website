@@ -1,0 +1,219 @@
+[
+  {
+    "description": "Chi tiền cho Hà Vân",
+    "debit_account": "110",
+    "credit_account": "1111",
+    "amount_oc": 200000,
+    "account_object_code": "NV00007",
+    "account_object_name": "Lê Hằng",
+    "refId": "f4e5a3b9-77f9-4a84-b044-6300afbb70c6",
+    "objectId": "bb7395b6-9e62-42b4-8516-4ba994bdd60c",
+    "rpdId": "6e2a953a-9b63-4f86-89dd-2c9ac7b8a3db"
+  },
+  {
+    "description": "Chi tiền cho Hà Vân",
+    "debit_account": "110",
+    "credit_account": "1111",
+    "amount_oc": 400000,
+    "account_object_code": "HVAN",
+    "account_object_name": "Hà Vân",
+    "refId": "f4e5a3b9-77f9-4a84-b044-6300afbb70c6",
+    "objectId": "8741f597-54ec-44f7-8965-758622c1f214",
+    "rpdId": "1f02f1a3-5451-4c7d-8513-107e8488d021"
+  },
+  {
+    "description": "Chi tiền cho Đỗ Huyền",
+    "debit_account": "10911",
+    "credit_account": "1111",
+    "amount_oc": 0,
+    "account_object_code": "DHUYEN",
+    "account_object_name": "Đỗ Huyền",
+    "refId": "607579d6-5671-4d03-837d-489fbaf08164",
+    "objectId": "503d0f4b-ac6e-4c9f-b739-ad44f9e654e4",
+    "rpdId": "b36b32c3-9eef-4605-ade4-f2b20a25ea43"
+  },
+  {
+    "description": "Chi tiền cho Đỗ Huyền",
+    "debit_account": "110",
+    "credit_account": "1111",
+    "amount_oc": 0,
+    "account_object_code": "DHUYEN",
+    "account_object_name": "Đỗ Huyền",
+    "refId": "607579d6-5671-4d03-837d-489fbaf08164",
+    "objectId": "503d0f4b-ac6e-4c9f-b739-ad44f9e654e4",
+    "rpdId": "6bd99f1f-c335-45b2-8382-948d82f281c3"
+  },
+  {
+    "description": "Chi tiền cho Quang Anh",
+    "debit_account": "1112",
+    "credit_account": "1111",
+    "amount_oc": 1000000,
+    "account_object_code": "NV00008",
+    "account_object_name": "Quang Anh",
+    "refId": "6ff6c9ee-1fea-4301-bca1-3808b0ee3272",
+    "objectId": "c3ecf352-0523-47b2-991d-c55c2ef43bbc",
+    "rpdId": "c9c77566-c979-475d-9952-395a4090da78"
+  },
+  {
+    "description": "Chi tiền cho Hà Vân",
+    "debit_account": "1111",
+    "credit_account": "1111",
+    "amount_oc": 12900,
+    "account_object_code": "HVAN",
+    "account_object_name": "Hà Vân",
+    "refId": "65b66941-a70c-47f9-8f22-3c704d75c3ef",
+    "objectId": "8741f597-54ec-44f7-8965-758622c1f214",
+    "rpdId": "d5016c68-d5ae-4834-8dce-ac184a6e077a"
+  },
+  {
+    "description": "Chi tiền cho Đỗ Huyền",
+    "debit_account": "1111",
+    "credit_account": "1111",
+    "amount_oc": 1200000,
+    "account_object_code": "DHUYEN",
+    "account_object_name": "Đỗ Huyền",
+    "refId": "dff2f1e2-0eff-4384-a593-6aa7ff776345",
+    "objectId": "503d0f4b-ac6e-4c9f-b739-ad44f9e654e4",
+    "rpdId": "6afed831-be74-4c35-9124-88030c1e560e"
+  },
+  {
+    "description": "Chi tiền cho Hà Vân",
+    "debit_account": "10911",
+    "credit_account": "1111",
+    "amount_oc": 0,
+    "account_object_code": "HVAN",
+    "account_object_name": "Hà Vân",
+    "refId": "2738449d-bba9-4055-a4aa-018834129b51",
+    "objectId": "8741f597-54ec-44f7-8965-758622c1f214",
+    "rpdId": "ef6d21fa-14ff-4881-9da3-1b5d4b151609"
+  },
+  {
+    "description": "Chi tiền cho aa",
+    "debit_account": "1111",
+    "credit_account": "1111",
+    "amount_oc": 0,
+    "refId": "0452ba7d-a016-4b6a-a402-6ac905a31777",
+    "rpdId": "524828a8-6777-4c9a-a775-fbc236aaf9bc"
+  },
+  {
+    "description": "Chi tiền cho aa",
+    "debit_account": "1111",
+    "credit_account": "1111",
+    "amount_oc": 0,
+    "refId": "d395652b-866a-4662-8625-e52cd67550b4",
+    "rpdId": "dcea3e1c-70db-49f8-9d0c-d8670e8b0ed1"
+  },
+  {
+    "description": "Chi tiền cho aa",
+    "debit_account": "1111",
+    "credit_account": "1111",
+    "amount_oc": 0,
+    "refId": "5ad863f0-3035-4076-aa68-6da628d9b31c",
+    "rpdId": "1a1606e4-e5e5-4c93-8889-3865eccaf089"
+  },
+  {
+    "description": "Chi tiền cho aa",
+    "debit_account": "1111",
+    "credit_account": "1111",
+    "amount_oc": 0,
+    "refId": "64afd542-c9c9-4a23-a96b-7462e4124957",
+    "rpdId": "cc9d7ad3-3cf6-4975-a510-a5c97a10c7bf"
+  },
+  {
+    "description": "Chi tiền cho aa",
+    "debit_account": "1111",
+    "credit_account": "1111",
+    "amount_oc": 0,
+    "refId": "00aa1f4a-c4cd-4bb5-9c15-372cd664aafd",
+    "rpdId": "aa2712e2-4028-4dfa-a04b-abd02e5f71f2"
+  },
+  {
+    "description": "Chi tiền cho aa",
+    "debit_account": "1111",
+    "credit_account": "1111",
+    "amount_oc": 0,
+    "refId": "a6dd568c-33e1-4d33-abf7-9de3c5bf6d02",
+    "rpdId": "da6dd438-8023-477c-bd47-c351728c2290"
+  },
+  {
+    "description": "Chi tiền cho aa",
+    "debit_account": "1111",
+    "credit_account": "1111",
+    "amount_oc": 0,
+    "refId": "ad4580fa-7679-4633-a469-edc2432e6766",
+    "rpdId": "b1882249-da83-468c-96ae-507b37cc27fa"
+  },
+  {
+    "description": "Chi tiền cho Đỗ Huyền",
+    "debit_account": "1111",
+    "credit_account": "1111",
+    "amount_oc": 0,
+    "account_object_code": "DHUYEN",
+    "account_object_name": "Đỗ Huyền",
+    "refId": "34191c44-2386-4dcf-b4f9-c5ef25542497",
+    "objectId": "503d0f4b-ac6e-4c9f-b739-ad44f9e654e4",
+    "rpdId": "44215101-a9db-4697-8795-fcdd7d885da2"
+  },
+  {
+    "description": "Chi tiền cho",
+    "debit_account": "1121",
+    "credit_account": "1111",
+    "amount_oc": 0,
+    "refId": "a152f537-3de4-4cec-b45c-e8b4fe6e38cc",
+    "rpdId": "ada5650f-d57e-48d0-bcf6-96764f3a45e5"
+  },
+  {
+    "description": "Chi tiền cho",
+    "debit_account": "1121",
+    "credit_account": "1111",
+    "amount_oc": 0,
+    "refId": "55ea3c95-1033-4c02-901d-76a87fb8bff5",
+    "rpdId": "e2dbdced-72fc-4440-94dd-32f2ce19d93a"
+  },
+  {
+    "description": "Chi tiền cho",
+    "debit_account": "1121",
+    "credit_account": "1111",
+    "amount_oc": 0,
+    "refId": "e8589bf0-a1d1-4463-bce4-e9ab75f3dca0",
+    "rpdId": "0fb0cbc0-ac68-4233-9fcb-93e10408b39e"
+  },
+  {
+    "description": "Chi tiền cho",
+    "debit_account": "1121",
+    "credit_account": "1111",
+    "amount_oc": 0,
+    "refId": "5e10a185-25ac-44dc-9dcc-8a7552c27f2d",
+    "rpdId": "47d8b32c-02ea-49f4-be3d-c710bae73ffc"
+  },
+  {
+    "description": "Chi tiền cho",
+    "debit_account": "1111",
+    "credit_account": "1111",
+    "amount_oc": 0,
+    "refId": "68f8b11e-6365-407e-878f-a4fed7224cf3",
+    "rpdId": "f05477fd-c695-4600-93f2-69ac1aab08d1"
+  },
+  {
+    "description": "Chi tiền cho 1",
+    "debit_account": "1112",
+    "credit_account": "1111",
+    "amount_oc": 1000000,
+    "account_object_code": "NV00008",
+    "account_object_name": "Quang Anh",
+    "refId": "d5c748b3-7781-48a3-877f-e9cce0d4d513",
+    "objectId": "c3ecf352-0523-47b2-991d-c55c2ef43bbc",
+    "rpdId": "f944388e-6763-452a-a0f5-cd4a1a628c5c"
+  },
+  {
+    "description": "Chi tiền cho 2",
+    "debit_account": "1111",
+    "credit_account": "1111",
+    "amount_oc": 10000,
+    "account_object_code": "NV00008",
+    "account_object_name": "Quang Anh",
+    "refId": "d5c748b3-7781-48a3-877f-e9cce0d4d513",
+    "objectId": "c3ecf352-0523-47b2-991d-c55c2ef43bbc",
+    "rpdId": "3cff2ac8-8d7a-4457-a1e8-c5ba9d0590a8"
+  }
+]

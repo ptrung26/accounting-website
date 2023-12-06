@@ -19,7 +19,7 @@ export default {
         </div>
       </div>
       <div class="caprocess-toolbar">
-        <router-link to="/CAUser" class="div-face-button">
+        <router-link to="/CAAccount" class="div-face-button">
           <div class="m-icon m-icon-calculator"></div>
           <p class="title-button">Hệ thống tài khoản</p>
         </router-link>

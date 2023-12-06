@@ -1,5 +1,14 @@
-input:focus {
+input:focus,
+textarea:focus {
   border-color: var(--primary-color);
+}
+
+.m-input.m-textarea {
+  outline: none;
+  resize: none;
+  padding: 9px;
+  height: 60px;
+  font-family: inherit;
 }
 
 .m-input {
@@ -30,6 +39,10 @@ input:focus {
 
 .m-input-require {
   color: #ff0000;
+}
+
+.m-input-disabed {
+  background-color: transparent;
 }
 
 .m-error-message {
@@ -63,6 +76,18 @@ input:focus {
   border-radius: 2px;
   border: 1px solid var(--border-color-default);
   cursor: pointer;
+  position: relative;
+}
+
+.m-checkbox-input--focus.m-checkbox-input::after {
+  width: 22px;
+  height: 22px;
+  content: "";
+  border-radius: 2px;
+  border: 1px solid rgb(142, 223, 247);
+  position: absolute;
+  top: -4px;
+  left: -4px;
 }
 
 .m-checkbox-input::before {

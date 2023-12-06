@@ -1,8 +1,8 @@
 import CA from "@/views/ca/Index.vue";
 import Layout from "@/layouts/Layout.vue";
 import CAProcess from "@/views/ca/CAProcess.vue";
-import CAReceive from "@/views/ca/CAReceive.vue";
-import CAUser from "@/views/ca/CAUser.vue";
+import CaPayment from "@/views/ca/CAPayment.vue";
+import CAAccount from "@/views/ca/CAAccount.vue";
 import CAPaymentDetail from "@/views/ca/CAPaymentDetail.vue";
 
 import * as VueRouter from "vue-router";
@@ -17,16 +17,17 @@ const routes = [
         component: CA,
         children: [
           { path: "CAProcess", component: CAProcess },
-          { path: "CAReceive", component: CAReceive },
+          { path: "CaPayment", component: CaPayment },
         ],
       },
-      { path: "CAUser", component: CAUser },
+      { path: "CAAccount", component: CAAccount },
     ],
   },
   {
     path: "/CAPaymentDetail/:id?",
-    CAPaymentDetail,
+    name: "CAPaymentDetail",
     component: CAPaymentDetail,
+    props: true,
   },
 ];
 const router = VueRouter.createRouter({

@@ -94,6 +94,10 @@
   height: 36px !important;
 }
 
+.m-icon-error {
+  background-position: -24px -954px;
+}
+
 .m-icon-warning--smail {
   background-position: -817px -145px;
 }
@@ -160,6 +164,35 @@
 }
 
 .m-16 {
+  width: 16px;
+  height: 16px;
+}
+.m-48 {
+  width: 48px;
+  height: 48px;
+}
+
+.m-icon-delete {
+  background-position: -464px -312px;
+}
+
+.m-icon-exclamation-cell--error {
+  width: 16px;
+  height: 16px;
+  background-position: -1696px -312px;
+}
+
+.m-icon-black {
+  background-position: -320px -360px;
+  width: 16px;
+  height: 16px;
+}
+
+.m-icon-black-down {
+  transform: rotate(90deg);
+  background-position: -320px -360px;
+  position: relative;
+  top: 2px;
   width: 16px;
   height: 16px;
 }

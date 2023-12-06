@@ -563,9 +563,7 @@ export default {
     <!-- Loading -->
     <teleport to="body">
       <div v-show="isLoading" class="m-spinner">
-        <div class="m-spinner-circle">
-          <img src="../../assets/loading.svg" />
-        </div>
+        <div class="m-spinner-circle"></div>
       </div>
     </teleport>
 

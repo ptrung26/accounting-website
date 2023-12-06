@@ -9,7 +9,7 @@ export default {
     },
     currentPage: { type: Number, default: 1 },
   },
-
+  emits: ["page-change"],
   data() {
     return {
       mCurrentPage: this.currentPage,
@@ -23,7 +23,7 @@ export default {
      */
     onPageChange(page) {
       this.mCurrentPage = page;
-      this.$emitter.emit("onPageChange", page);
+      this.$emit("page-change", page);
     },
 
     /**

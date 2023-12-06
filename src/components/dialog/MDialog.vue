@@ -1,6 +1,5 @@
 <script>
 import MButton from "../button/MButton.vue";
-import MButtonIcon from "../button/MButtonIcon.vue";
 import MPopup from "./MPopup.vue";
 export default {
   props: {
@@ -8,7 +7,6 @@ export default {
   },
   components: {
     MButton,
-    MButtonIcon,
     MPopup,
   },
   methods: {
@@ -98,10 +96,6 @@ export default {
     <div class="m-dialog-box">
       <div class="m-dialog-header">
         <h3 class="m-dialog-title">{{ title }}</h3>
-        <m-button-icon
-          class="m-icon-close--small"
-          @click="_cancel"
-        ></m-button-icon>
       </div>
       <p class="m-dialog-message">
         <span class="m-icon" :class="icon"></span>

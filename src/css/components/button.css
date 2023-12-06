@@ -9,15 +9,34 @@
   font-family: Misa Medium;
 }
 
+.m-btn.disable {
+  cursor: default;
+  pointer-events: none;
+  color: #ccc;
+}
+
+.m-btn.disable:focus,
+.m-btn.disable:active {
+  outline: none;
+  border: none;
+}
+
+.m-btn.disable:hover {
+  background-color: initial;
+}
+
 .m-btn:hover {
   background-color: var(--hover-color);
 }
 
 .m-btn:focus,
 .m-btn:active {
-  background-color: var(--focus-color);
-  outline-width: 1px;
-  outline: 1px solid var(--focus-color);
+  outline: 2px solid #fff;
+}
+
+.m-btn-fff:focus,
+.m-btn-fff:active {
+  outline: 2px solid #ccc;
 }
 
 /* Button-icon */
@@ -27,6 +46,15 @@
   background-position: 12px center;
   padding-left: 36px;
   padding-right: 16px;
+}
+
+.m-btn-transparent {
+  background-color: transparent;
+  border: 1px solid #6b6c72;
+}
+
+.m-btn-transparent:focus {
+  outline: 2px solid #fff;
 }
 
 /* .m-btn-icon--add {
@@ -44,9 +72,7 @@
 
 .m-btn-seconary:focus,
 .m-btn-seconary:active {
-  background-color: #d2d5d6;
-  outline-width: 1px;
-  outline: 1px solid #d2d5d6;
+  outline: 2px solid #000;
 }
 
 .m-combo-btn {
@@ -61,12 +87,6 @@
 }
 .m-combo-btn {
   padding: 0 16px;
-}
-
-.m-combo-btn.disable {
-  color: #afafaf;
-  cursor: default;
-  pointer-events: none;
 }
 
 .m-combo-btn:hover {

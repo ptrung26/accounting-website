@@ -1,9 +1,25 @@
 <script>
-export default {};
+export default {
+  props: {
+    disable: {
+      type: Boolean,
+      default: false,
+    },
+  },
+};
 </script>
 
 <template>
-  <button class="m-icon"></button>
+  <button
+    class="m-icon"
+    :class="{
+      disable: disable,
+    }"
+  ></button>
 </template>
 
-<style scoped></style>
+<style scoped>
+.disable {
+  cursor: default;
+}
+</style>
