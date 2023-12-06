@@ -1,4 +1,4 @@
-# misa-web07-vue
+# Accounting Website
 
 ## Project setup
 ```
